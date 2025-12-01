@@ -1,0 +1,57 @@
+package lab4.backend.utils;
+
+import lab4.backend.dto.CheckHitResultDTO;
+import lab4.backend.dto.DotDTO;
+
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.time.LocalDateTime;
+
+public class HitChecker {
+    public static CheckHitResultDTO checkHit(DotDTO dotDTO){
+        Long startTime = System.nanoTime();
+        Boolean result = check(dotDTO.getX(), dotDTO.getY(), dotDTO.getR());
+        Long endTime = System.nanoTime();
+
+        return new CheckHitResultDTO(
+                dotDTO.getX(),
+                dotDTO.getY(),
+                dotDTO.getR(),
+                result,
+                endTime - startTime,
+                LocalDateTime.now().withNano(0)
+        );
+    }
+
+    private static Boolean check(BigDecimal x, BigDecimal y, BigDecimal r) {
+        BigDecimal zero = BigDecimal.ZERO;
+        BigDecimal halfR = r.divide(BigDecimal.valueOf(2), MathContext.DECIMAL128);
+
+        if (x.compareTo(zero) <= 0 && y.compareTo(zero) <= 0 &&
+                x.compareTo(r.negate()) >= 0 && y.compareTo(r.negate()) >= 0) {
+            return true;
+        }
+
+        if (x.compareTo(zero) <= 0 && y.compareTo(zero) >= 0) {
+            BigDecimal xSquared = x.multiply(x);
+            BigDecimal ySquared = y.multiply(y);
+            BigDecimal rSquared = halfR.multiply(halfR);
+            BigDecimal sumSquares = xSquared.add(ySquared);
+
+            if (sumSquares.compareTo(rSquared) <= 0) {
+                return true;
+            }
+        }
+
+        if (x.compareTo(zero) >= 0 && y.compareTo(zero) >= 0) {
+            BigDecimal func = x.negate().add(r);
+            if (y.compareTo(func) <= 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+}

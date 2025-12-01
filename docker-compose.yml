@@ -3,7 +3,7 @@ version: '3.9'
 services:
   postgres:
     image: postgres:17
-    container_name: lab3_db
+    container_name: lab3-postgres
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -30,7 +30,7 @@ services:
         - DATABASE_URL=${DATABASE_URL}
         - DB_USERNAME=${DB_USERNAME}
         - DB_PASSWORD=${DB_PASSWORD}
-    container_name: lab3
+    container_name: lab3-wildfly
     ports:
       - "8080:8080"
       - "9990:9990"
