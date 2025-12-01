@@ -1,5 +1,6 @@
-package lab4.backend.dto;
+package lab4.backend.data.entities;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,10 +8,15 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CheckHitResultDTO {
+@Table(name = "results")
+public class ResultEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private BigDecimal x;
     private BigDecimal y;
     private BigDecimal r;

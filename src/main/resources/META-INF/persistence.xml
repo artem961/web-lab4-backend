@@ -6,6 +6,8 @@
         <jta-data-source>java:/jboss/datasources/MyPostgresDS</jta-data-source>
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
+        <class>lab4.backend.data.entities.ResultEntity</class>
+
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
             <property name="eclipselink.weaving" value="false"/>

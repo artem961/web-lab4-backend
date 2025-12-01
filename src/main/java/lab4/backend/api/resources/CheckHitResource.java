@@ -1,29 +1,39 @@
 package lab4.backend.api.resources;
 
 import jakarta.ejb.EJB;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import lab4.backend.dto.CheckHitResultDTO;
+import lab4.backend.dto.ResultDTO;
 import lab4.backend.dto.DotDTO;
-import lab4.backend.services.DotService;
+import lab4.backend.services.ResultService;
 import lombok.extern.java.Log;
 
-import java.math.BigDecimal;
+import java.util.List;
 
-@Path("/checkHit")
+@Path("/dots")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Log
 public class CheckHitResource {
     @EJB
-    private DotService dotService;
+    private ResultService resultService;
 
     @POST
-    public CheckHitResultDTO postCheckHit(DotDTO dotDTO) {
-        return dotService.checkHit(dotDTO);
+    @Path("/check")
+    public ResultDTO postCheckHit(DotDTO dotDTO) {
+        return resultService.checkHit(dotDTO);
+    }
+
+    @GET
+    @Path("/all")
+    public List<ResultDTO> getAllResults() {
+        return resultService.getAllResults();
+    }
+
+    @DELETE
+    @Path("/all")
+    public void deleteAllResults() {
+        resultService.deleteAllResults();
     }
 
 }

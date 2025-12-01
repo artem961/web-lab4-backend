@@ -1,6 +1,6 @@
 package lab4.backend.utils;
 
-import lab4.backend.dto.CheckHitResultDTO;
+import lab4.backend.dto.ResultDTO;
 import lab4.backend.dto.DotDTO;
 
 import java.math.BigDecimal;
@@ -8,12 +8,12 @@ import java.math.MathContext;
 import java.time.LocalDateTime;
 
 public class HitChecker {
-    public static CheckHitResultDTO checkHit(DotDTO dotDTO){
+    public static ResultDTO checkHit(DotDTO dotDTO){
         Long startTime = System.nanoTime();
         Boolean result = check(dotDTO.getX(), dotDTO.getY(), dotDTO.getR());
         Long endTime = System.nanoTime();
 
-        return new CheckHitResultDTO(
+        return new ResultDTO(
                 dotDTO.getX(),
                 dotDTO.getY(),
                 dotDTO.getR(),
