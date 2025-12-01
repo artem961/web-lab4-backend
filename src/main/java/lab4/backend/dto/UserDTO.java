@@ -5,14 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class DotDTO {
-    private BigDecimal x;
-    private BigDecimal y;
-    private BigDecimal r;
+public class UserDTO {
+    private Integer id;
+    private String username;
+    private String password;
 }

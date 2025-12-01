@@ -1,6 +1,5 @@
-package lab4.backend.data.repositories.postgres;
+package lab4.backend.data.repositories.result.postgres;
 
-import lab4.backend.dto.DotDTO;
 import lab4.backend.dto.ResultDTO;
 
 import java.util.List;

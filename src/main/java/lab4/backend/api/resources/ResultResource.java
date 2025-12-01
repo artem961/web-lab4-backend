@@ -3,11 +3,11 @@ package lab4.backend.api.resources;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import lab4.backend.api.models.request.result.DotRequestModel;
-import lab4.backend.api.models.response.result.ResultResponseModel;
+import lab4.backend.api.models.result.request.DotRequestModel;
+import lab4.backend.api.models.result.response.ResultResponseModel;
+import lab4.backend.dto.DotDTO;
 import lab4.backend.dto.ResultDTO;
 import lab4.backend.services.ResultService;
-import lab4.backend.utils.mapping.DotMapper;
 import lab4.backend.utils.mapping.ResultMapper;
 import lombok.extern.java.Log;
 
@@ -25,7 +25,13 @@ public class ResultResource {
     @POST
     @Path("/check")
     public ResultResponseModel checkHit(DotRequestModel requestModel) {
-        ResultDTO resultDTO = resultService.checkHit(DotMapper.requestModelToDTO(requestModel));
+        DotDTO dotDTO = DotDTO.builder()
+                .x(requestModel.getX())
+                .y(requestModel.getY())
+                .r(requestModel.getR())
+                .build();
+
+        ResultDTO resultDTO = resultService.checkHit(dotDTO);
         return ResultMapper.dtoToResponseModel(resultDTO);
     }
 

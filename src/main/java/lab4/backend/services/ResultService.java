@@ -2,12 +2,10 @@ package lab4.backend.services;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
-import lab4.backend.data.repositories.postgres.PostgresResultRepository;
+import lab4.backend.data.repositories.result.postgres.PostgresResultRepository;
 import lab4.backend.dto.ResultDTO;
 import lab4.backend.dto.DotDTO;
 import lab4.backend.utils.HitChecker;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 

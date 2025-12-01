@@ -1,14 +1,13 @@
 package lab4.backend.utils.mapping;
 
 import jakarta.ejb.Singleton;
-import lab4.backend.api.models.response.result.ResultResponseModel;
+import lab4.backend.api.models.result.response.ResultResponseModel;
 import lab4.backend.data.entities.ResultEntity;
 import lab4.backend.dto.ResultDTO;
 
 
-@Singleton
 public class ResultMapper {
-    public ResultDTO entityToDTO(ResultEntity resultEntity) {
+    public static ResultDTO entityToDTO(ResultEntity resultEntity) {
         ResultDTO resultDTO = new ResultDTO();
 
         resultDTO.setX(resultEntity.getX());
@@ -21,7 +20,7 @@ public class ResultMapper {
         return resultDTO;
     }
 
-    public ResultEntity dtoToEntity(ResultDTO resultDTO) {
+    public static ResultEntity dtoToEntity(ResultDTO resultDTO) {
         ResultEntity resultEntity = new ResultEntity();
 
         resultEntity.setX(resultDTO.getX());
