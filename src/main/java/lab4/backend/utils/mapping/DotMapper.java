@@ -1,6 +1,6 @@
 package lab4.backend.utils.mapping;
 
-import lab4.backend.api.models.request.DotRequestModel;
+import lab4.backend.api.models.request.result.DotRequestModel;
 import lab4.backend.dto.DotDTO;
 
 public class DotMapper {

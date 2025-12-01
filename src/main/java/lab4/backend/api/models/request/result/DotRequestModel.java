@@ -1,4 +1,4 @@
-package lab4.backend.api.models.request;
+package lab4.backend.api.models.request.result;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

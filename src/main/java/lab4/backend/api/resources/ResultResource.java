@@ -3,10 +3,9 @@ package lab4.backend.api.resources;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import lab4.backend.api.models.request.DotRequestModel;
-import lab4.backend.api.models.response.ResultResponseModel;
+import lab4.backend.api.models.request.result.DotRequestModel;
+import lab4.backend.api.models.response.result.ResultResponseModel;
 import lab4.backend.dto.ResultDTO;
-import lab4.backend.dto.DotDTO;
 import lab4.backend.services.ResultService;
 import lab4.backend.utils.mapping.DotMapper;
 import lab4.backend.utils.mapping.ResultMapper;
@@ -19,13 +18,13 @@ import java.util.stream.Collectors;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Log
-public class CheckHitResource {
+public class ResultResource {
     @EJB
     private ResultService resultService;
 
     @POST
     @Path("/check")
-    public ResultResponseModel postCheckHit(DotRequestModel requestModel) {
+    public ResultResponseModel checkHit(DotRequestModel requestModel) {
         ResultDTO resultDTO = resultService.checkHit(DotMapper.requestModelToDTO(requestModel));
         return ResultMapper.dtoToResponseModel(resultDTO);
     }
