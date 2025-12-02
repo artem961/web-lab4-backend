@@ -15,8 +15,10 @@ import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.TokenPayloadDTO;
 import lab4.backend.dto.UserDTO;
+import lab4.backend.services.exceptions.ServiceException;
+import lab4.backend.services.utils.annotations.ExceptionMessage;
+import lab4.backend.services.utils.annotations.WrapWithServiceException;
 import lab4.backend.utils.mapping.TokenMapper;
-import lombok.var;
 
 import java.security.Key;
 import java.time.Instant;
@@ -25,6 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
+@WrapWithServiceException
+@ExceptionMessage
 public class TokenService {
     @Inject
     private JWTConfig jwtConfig;
@@ -75,24 +79,24 @@ public class TokenService {
                     .username((String) claims.get("username"))
                     .build();
         } catch (JwtException e) {
-            throw new RuntimeException("Invalid token: " + e.getMessage());
+            throw new ServiceException("Invalid token: " + e.getMessage());
         }
     }
 
     public TokenPairDTO refreshToken(TokenDTO refreshToken) {
         if (!isRefreshToken(refreshToken)) {
-            throw new RuntimeException("Token is not a refresh token");
+            throw new ServiceException("Token is not a refresh token");
         }
 
         if (!validateToken(refreshToken)) {
-            throw new RuntimeException("Invalid token");
+            throw new ServiceException("Invalid token");
         }
 
         if (postgresTokenRepository.existsByToken(TokenMapper.dtoToEntity(refreshToken))) {
             postgresTokenRepository.delete(TokenMapper.dtoToEntity(refreshToken));
             return generateTokenPair(extractPayloadFromToken(refreshToken));
         }else{
-            throw new RuntimeException("Token does not exist");
+            throw new ServiceException("Token does not exist");
         }
     }
 

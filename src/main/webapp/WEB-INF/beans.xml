@@ -5,7 +5,7 @@
        bean-discovery-mode="all">
 
     <interceptors>
-        <class>lab4.backend.interceptors.ServiceExceptionInterceptor</class>
+        <class>lab4.backend.services.utils.annotations.ServiceExceptionInterceptor</class>
     </interceptors>
 
 </beans>

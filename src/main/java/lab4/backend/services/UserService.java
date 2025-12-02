@@ -6,23 +6,24 @@ import lab4.backend.data.entities.UserEntity;
 import lab4.backend.data.repositories.user.postgres.PostgresUserRepository;
 import lab4.backend.dto.UserDTO;
 import lab4.backend.services.exceptions.ServiceException;
+import lab4.backend.services.utils.annotations.ExceptionMessage;
+import lab4.backend.services.utils.annotations.WrapWithServiceException;
 import lab4.backend.utils.mapping.UserMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
+@WrapWithServiceException
+@ExceptionMessage
 public class UserService {
     @EJB
     private PostgresUserRepository postgresUserRepository;
 
     public UserDTO createUser(UserDTO userDTO) {
-        try {
-            return UserMapper.entityToDTO(
-                    postgresUserRepository.createUser(UserMapper.dtoToEntity(userDTO)));
-        } catch (Exception e) {
-            throw new ServiceException("User creation failed", e);
-        }
+        return UserMapper.entityToDTO(
+                postgresUserRepository.createUser(UserMapper.dtoToEntity(userDTO)));
+
     }
 
     public UserDTO findUserByName(String name) {
@@ -32,12 +33,9 @@ public class UserService {
     }
 
     public List<UserDTO> getAllUsers() {
-        try {
-            return postgresUserRepository.getAllUsers().stream()
-                    .map(UserMapper::entityToDTO)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new ServiceException("Users list loading failed", e);
-        }
+        return postgresUserRepository.getAllUsers().stream()
+                .map(UserMapper::entityToDTO)
+                .collect(Collectors.toList());
+
     }
 }
