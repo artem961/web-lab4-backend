@@ -83,6 +83,10 @@ public class TokenService {
             throw new RuntimeException("Token is not a refresh token");
         }
 
+        if (!validateToken(refreshToken)) {
+            throw new RuntimeException("Invalid token");
+        }
+
         if (postgresTokenRepository.existsByToken(refreshToken)) {
             postgresTokenRepository.delete(refreshToken);
             return generateTokenPair(extractPayloadFromToken(refreshToken));

@@ -1,6 +1,7 @@
 package lab4.backend.utils.mapping;
 
 import lab4.backend.data.entities.UserEntity;
+import lab4.backend.dto.TokenPayloadDTO;
 import lab4.backend.dto.UserDTO;
 
 public class UserMapper {
@@ -22,5 +23,14 @@ public class UserMapper {
         userDTO.setPassword(userEntity.getPassword());
 
         return userDTO;
+    }
+
+    public static TokenPayloadDTO userDTOToTokenPayloadDTO(UserDTO userDTO) {
+        TokenPayloadDTO tokenPayloadDTO = new TokenPayloadDTO();
+
+        tokenPayloadDTO.setUserId(userDTO.getId());
+        tokenPayloadDTO.setUsername(userDTO.getUsername());
+
+        return tokenPayloadDTO;
     }
 }

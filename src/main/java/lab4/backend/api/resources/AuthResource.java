@@ -11,8 +11,11 @@ import lab4.backend.api.models.auth.request.LogoutRequestModel;
 import lab4.backend.api.models.auth.request.RefreshRequestModel;
 import lab4.backend.api.models.auth.request.RegisterRequestModel;
 import lab4.backend.api.models.auth.response.TokenPairResponseModel;
+import lab4.backend.dto.TokenDTO;
+import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.UserDTO;
-import lab4.backend.services.UserService;
+import lab4.backend.services.AuthService;
+import lab4.backend.utils.mapping.TokenMapper;
 import lombok.extern.java.Log;
 
 @Path("/auth")
@@ -21,34 +24,47 @@ import lombok.extern.java.Log;
 @Log
 public class AuthResource {
     @EJB
-    private UserService userService;
+    private AuthService authService;
 
     @POST
     @Path("/login")
-    public TokenPairResponseModel login(LoginRequestModel loginRequestModel) {
-        return null;
+    public TokenPairResponseModel login(LoginRequestModel requestModel) {
+        UserDTO userDTO =UserDTO.builder()
+                .username(requestModel.getUsername())
+                .password(requestModel.getPassword())
+                .build();
+
+        TokenPairDTO tokenPairDTO = authService.authenticate(userDTO);
+
+        return TokenMapper.tokenPairDTOtoTokenPairResponseModel(tokenPairDTO);
     }
 
     @POST
     @Path("/register")
-    public TokenPairResponseModel register(RegisterRequestModel registerRequestModel) {
+    public TokenPairResponseModel register(RegisterRequestModel requestModel) {
         UserDTO userDTO = UserDTO.builder()
-                .username(registerRequestModel.getUsername())
-                .password(registerRequestModel.getPassword())
+                .username(requestModel.getUsername())
+                .password(requestModel.getPassword())
                 .build();
-        userDTO = userService.createUser(userDTO);
-        return userDTO;
+
+        TokenPairDTO tokenPairDTO = authService.register(userDTO);
+
+        return TokenMapper.tokenPairDTOtoTokenPairResponseModel(tokenPairDTO);
     }
 
     @POST
     @Path("/refresh")
-    public TokenPairResponseModel refresh(RefreshRequestModel refreshRequestModel) {
-        return null;
+    public TokenPairResponseModel refresh(RefreshRequestModel requestModel) {
+        TokenDTO tokenDTO = new TokenDTO(requestModel.getRefreshToken());
+        TokenPairDTO tokenPairDTO = authService.refreshToken(tokenDTO);
+
+        return TokenMapper.tokenPairDTOtoTokenPairResponseModel(tokenPairDTO);
     }
 
     @POST
     @Path("/logout")
-    public void logout(LogoutRequestModel logoutRequestModel) {
-        return;
+    public void logout(LogoutRequestModel requestModel) {
+        TokenDTO tokenDTO = new TokenDTO(requestModel.getRefreshToken());
+        authService.logout(tokenDTO);
     }
 }
