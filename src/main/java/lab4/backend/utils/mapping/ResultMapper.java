@@ -32,17 +32,4 @@ public class ResultMapper {
 
         return resultEntity;
     }
-
-    public static ResultResponseModel dtoToResponseModel(ResultDTO resultDTO) {
-        ResultResponseModel responseModel = new ResultResponseModel();
-
-        responseModel.setX(resultDTO.getX());
-        responseModel.setY(resultDTO.getY());
-        responseModel.setR(resultDTO.getR());
-        responseModel.setResult(resultDTO.getResult());
-        responseModel.setTime(resultDTO.getTime());
-        responseModel.setCurrentTime(resultDTO.getCurrentTime());
-
-        return responseModel;
-    }
 }

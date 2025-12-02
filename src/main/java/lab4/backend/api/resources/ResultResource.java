@@ -3,13 +3,13 @@ package lab4.backend.api.resources;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
-import lab4.backend.api.filters.auth.AuthorizedOnly;
+import lab4.backend.api.utils.filters.auth.AuthorizedOnly;
 import lab4.backend.api.models.result.request.DotRequestModel;
 import lab4.backend.api.models.result.response.ResultResponseModel;
+import lab4.backend.api.utils.mapping.ResultMapper;
 import lab4.backend.dto.DotDTO;
 import lab4.backend.dto.ResultDTO;
 import lab4.backend.services.ResultService;
-import lab4.backend.utils.mapping.ResultMapper;
 import lombok.extern.java.Log;
 
 import java.util.List;
@@ -34,14 +34,14 @@ public class ResultResource {
                 .build();
 
         ResultDTO resultDTO = resultService.checkHit(dotDTO);
-        return ResultMapper.dtoToResponseModel(resultDTO);
+        return ResultMapper.resultDtoToResponseModel(resultDTO);
     }
 
     @GET
     @Path("/all")
     public List<ResultResponseModel> getAllResults() {
         return resultService.getAllResults().stream()
-                .map(ResultMapper::dtoToResponseModel)
+                .map(ResultMapper::resultDtoToResponseModel)
                 .collect(Collectors.toList());
     }
 

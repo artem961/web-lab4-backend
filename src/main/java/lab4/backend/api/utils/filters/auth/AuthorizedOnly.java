@@ -1,4 +1,4 @@
-package lab4.backend.api.filters.auth;
+package lab4.backend.api.utils.filters.auth;
 
 import jakarta.ws.rs.NameBinding;
 

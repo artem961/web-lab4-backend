@@ -21,13 +21,4 @@ public class TokenMapper {
 
         return tokenEntity;
     }
-
-    public static TokenPairResponseModel tokenPairDTOtoTokenPairResponseModel(TokenPairDTO tokenPairDTO){
-        return TokenPairResponseModel.builder()
-                .accessToken(tokenPairDTO.getAccessToken().getToken())
-                .refreshToken(tokenPairDTO.getRefreshToken().getToken())
-                .tokenType(tokenPairDTO.getTokenType())
-                .build();
-    }
-
 }

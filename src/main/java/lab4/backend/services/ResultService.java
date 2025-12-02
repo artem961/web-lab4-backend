@@ -5,7 +5,7 @@ import jakarta.ejb.Stateless;
 import lab4.backend.data.repositories.result.postgres.PostgresResultRepository;
 import lab4.backend.dto.ResultDTO;
 import lab4.backend.dto.DotDTO;
-import lab4.backend.utils.HitChecker;
+import lab4.backend.services.utils.HitChecker;
 
 import java.util.List;
 

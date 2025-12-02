@@ -1,4 +1,4 @@
-package lab4.backend.utils;
+package lab4.backend.services.utils;
 
 import lab4.backend.dto.ResultDTO;
 import lab4.backend.dto.DotDTO;

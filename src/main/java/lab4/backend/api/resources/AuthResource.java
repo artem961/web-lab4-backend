@@ -11,11 +11,11 @@ import lab4.backend.api.models.auth.request.LogoutRequestModel;
 import lab4.backend.api.models.auth.request.RefreshRequestModel;
 import lab4.backend.api.models.auth.request.RegisterRequestModel;
 import lab4.backend.api.models.auth.response.TokenPairResponseModel;
+import lab4.backend.api.utils.mapping.AuthMapper;
 import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.UserDTO;
 import lab4.backend.services.AuthService;
-import lab4.backend.utils.mapping.TokenMapper;
 import lombok.extern.java.Log;
 
 @Path("/auth")
@@ -36,7 +36,7 @@ public class AuthResource {
 
         TokenPairDTO tokenPairDTO = authService.authenticate(userDTO);
 
-        return TokenMapper.tokenPairDTOtoTokenPairResponseModel(tokenPairDTO);
+        return AuthMapper.tokenPairDtoToTokenPairResponseModel(tokenPairDTO);
     }
 
     @POST
@@ -49,7 +49,7 @@ public class AuthResource {
 
         TokenPairDTO tokenPairDTO = authService.register(userDTO);
 
-        return TokenMapper.tokenPairDTOtoTokenPairResponseModel(tokenPairDTO);
+        return AuthMapper.tokenPairDtoToTokenPairResponseModel(tokenPairDTO);
     }
 
     @POST
@@ -58,7 +58,7 @@ public class AuthResource {
         TokenDTO tokenDTO = new TokenDTO(requestModel.getRefreshToken());
         TokenPairDTO tokenPairDTO = authService.refreshToken(tokenDTO);
 
-        return TokenMapper.tokenPairDTOtoTokenPairResponseModel(tokenPairDTO);
+        return AuthMapper.tokenPairDtoToTokenPairResponseModel(tokenPairDTO);
     }
 
     @POST
