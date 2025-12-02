@@ -70,7 +70,7 @@ public class TokenService {
             var claims = jwtParser.parseClaimsJws(token.getToken()).getBody();
 
             return TokenPayloadDTO.builder()
-                    .userId(Integer.valueOf((String) claims.get("userId")))
+                    .userId((Integer) claims.get("userId"))
                     .username((String) claims.get("username"))
                     .build();
         } catch (JwtException e) {

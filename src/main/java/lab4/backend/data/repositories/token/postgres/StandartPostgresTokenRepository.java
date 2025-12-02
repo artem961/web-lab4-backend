@@ -2,6 +2,7 @@ package lab4.backend.data.repositories.token.postgres;
 
 import jakarta.ejb.Singleton;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import lab4.backend.data.entities.TokenEntity;
 import lab4.backend.dto.TokenDTO;
@@ -24,11 +25,19 @@ public class StandartPostgresTokenRepository implements PostgresTokenRepository 
     public Boolean existsByToken(TokenDTO tokenDTO) {
         String token = tokenDTO.getToken();
 
-        Object result = em.createQuery("select 1 from TokenEntity where token=:token")
-                .setParameter("token", token)
-                .getSingleResult();
+        try {
+            TokenEntity foundToken = em.createQuery(
+                            "SELECT t FROM TokenEntity t WHERE t.token = :token",
+                            TokenEntity.class
+                    )
+                    .setParameter("token", token)
+                    .getSingleResult();
 
-        return (Boolean) result != null;
+            return foundToken != null;
+
+        } catch (NoResultException e) {
+            return false;
+        }
     }
 
     @Override
