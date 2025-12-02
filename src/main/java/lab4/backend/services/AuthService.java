@@ -5,6 +5,7 @@ import jakarta.ejb.Singleton;
 import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.UserDTO;
+import lab4.backend.services.utils.CatchAllExceptions;
 import lab4.backend.utils.mapping.UserMapper;
 
 @Singleton
@@ -16,7 +17,7 @@ public class AuthService {
 
 
     public TokenPairDTO authenticate(UserDTO userDTO) {
-        UserDTO bdUser = userService.getUserByName(userDTO.getUsername());
+        UserDTO bdUser = userService.findUserByName(userDTO.getUsername());
         if (userDTO.getPassword().equals(bdUser.getPassword())){
             return tokenService.generateTokenPair(UserMapper.userDTOToTokenPayloadDTO(bdUser));
         } else{
@@ -29,6 +30,7 @@ public class AuthService {
         return tokenService.generateTokenPair(UserMapper.userDTOToTokenPayloadDTO(userDTO));
     }
 
+    @CatchAllExceptions
     public TokenPairDTO refreshToken(TokenDTO refreshToken) {
         return tokenService.refreshToken(refreshToken);
     }

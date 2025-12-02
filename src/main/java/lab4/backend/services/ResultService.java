@@ -5,6 +5,7 @@ import jakarta.ejb.Stateless;
 import lab4.backend.data.repositories.result.postgres.PostgresResultRepository;
 import lab4.backend.dto.ResultDTO;
 import lab4.backend.dto.DotDTO;
+import lab4.backend.services.exceptions.ServiceException;
 import lab4.backend.services.utils.HitChecker;
 import lab4.backend.utils.mapping.ResultMapper;
 
@@ -17,16 +18,24 @@ public class ResultService {
     private PostgresResultRepository postgresResultRepository;
 
     public ResultDTO checkHit(DotDTO dotDTO){
-        ResultDTO resultDTO = HitChecker.checkHit(dotDTO);
-        postgresResultRepository.saveResult(
-                ResultMapper.dtoToEntity(resultDTO));
-        return resultDTO;
+        try{
+            ResultDTO resultDTO = HitChecker.checkHit(dotDTO);
+            postgresResultRepository.saveResult(
+                    ResultMapper.dtoToEntity(resultDTO));
+            return resultDTO;
+        } catch(Exception e){
+            throw new ServiceException("Failed to check result", e);
+        }
     }
 
     public List<ResultDTO> getAllResults(){
-        return postgresResultRepository.getAllResults().stream()
-                .map(ResultMapper::entityToDTO)
-                .collect(Collectors.toList());
+        try {
+            return postgresResultRepository.getAllResults().stream()
+                    .map(ResultMapper::entityToDTO)
+                    .collect(Collectors.toList());
+        } catch(Exception e){
+            throw new ServiceException("Failed to check result", e);
+        }
     }
 
     public void deleteAllResults(){

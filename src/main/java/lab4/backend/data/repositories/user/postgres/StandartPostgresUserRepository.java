@@ -9,6 +9,7 @@ import lab4.backend.utils.mapping.UserMapper;
 import lombok.extern.java.Log;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -26,13 +27,13 @@ public class StandartPostgresUserRepository implements PostgresUserRepository {
     }
 
     @Override
-    public UserEntity findUserByName(String name) {
+    public Optional<UserEntity> findUserByName(String name) {
         UserEntity userEntity = em
                 .createQuery("select u from UserEntity u where u.username=:username", UserEntity.class)
                 .setParameter("username", name)
                 .getSingleResult();
 
-        return userEntity;
+        return Optional.ofNullable(userEntity);
     }
 
     @Override
