@@ -3,6 +3,7 @@ package lab4.backend.api.resources;
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import lab4.backend.api.filters.auth.AuthorizedOnly;
 import lab4.backend.api.models.result.request.DotRequestModel;
 import lab4.backend.api.models.result.response.ResultResponseModel;
 import lab4.backend.dto.DotDTO;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Path("/dots")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@AuthorizedOnly
 @Log
 public class ResultResource {
     @EJB
