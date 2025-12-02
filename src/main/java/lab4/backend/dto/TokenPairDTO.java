@@ -1,6 +1,5 @@
 package lab4.backend.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TokenDTO {
-    private String token;
+public class TokenPairDTO {
+    public TokenDTO accessToken;
+    public TokenDTO refreshToken;
+    public String tokenType;
+
 }

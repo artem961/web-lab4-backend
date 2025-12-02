@@ -7,6 +7,8 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
         <class>lab4.backend.data.entities.ResultEntity</class>
+        <class>lab4.backend.data.entities.UserEntity</class>
+        <class>lab4.backend.data.entities.TokenEntity</class>
 
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>

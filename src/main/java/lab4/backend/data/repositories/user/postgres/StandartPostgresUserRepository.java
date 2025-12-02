@@ -6,11 +6,14 @@ import jakarta.persistence.PersistenceContext;
 import lab4.backend.data.entities.UserEntity;
 import lab4.backend.dto.UserDTO;
 import lab4.backend.utils.mapping.UserMapper;
+import lombok.extern.java.Log;
 
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Singleton
+@Log
 public class StandartPostgresUserRepository implements PostgresUserRepository {
     @PersistenceContext
     private EntityManager em;
@@ -19,6 +22,7 @@ public class StandartPostgresUserRepository implements PostgresUserRepository {
     public UserDTO createUser(UserDTO userDTO) {
         UserEntity userEntity = UserMapper.dtoToEntity(userDTO);
         em.persist(userEntity);
+        em.flush();
         return UserMapper.entityToDTO(userEntity);
     }
 
