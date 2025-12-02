@@ -27,21 +27,16 @@ public class ResultResource {
     @POST
     @Path("/check")
     public ResultResponseModel checkHit(DotRequestModel requestModel) {
-        DotDTO dotDTO = DotDTO.builder()
-                .x(requestModel.getX())
-                .y(requestModel.getY())
-                .r(requestModel.getR())
-                .build();
-
+        DotDTO dotDTO = ResultMapper.dotRequestModelToDotDTO(requestModel);
         ResultDTO resultDTO = resultService.checkHit(dotDTO);
-        return ResultMapper.resultDtoToResponseModel(resultDTO);
+        return ResultMapper.resultDtoToResultResponseModel(resultDTO);
     }
 
     @GET
     @Path("/all")
     public List<ResultResponseModel> getAllResults() {
         return resultService.getAllResults().stream()
-                .map(ResultMapper::resultDtoToResponseModel)
+                .map(ResultMapper::resultDtoToResultResponseModel)
                 .collect(Collectors.toList());
     }
 

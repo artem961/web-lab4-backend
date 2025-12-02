@@ -29,35 +29,24 @@ public class AuthResource {
     @POST
     @Path("/login")
     public TokenPairResponseModel login(LoginRequestModel requestModel) {
-        UserDTO userDTO =UserDTO.builder()
-                .username(requestModel.getUsername())
-                .password(requestModel.getPassword())
-                .build();
-
+        UserDTO userDTO = AuthMapper.loginRequestModelToUserDto(requestModel);
         TokenPairDTO tokenPairDTO = authService.authenticate(userDTO);
-
         return AuthMapper.tokenPairDtoToTokenPairResponseModel(tokenPairDTO);
     }
 
     @POST
     @Path("/register")
     public TokenPairResponseModel register(RegisterRequestModel requestModel) {
-        UserDTO userDTO = UserDTO.builder()
-                .username(requestModel.getUsername())
-                .password(requestModel.getPassword())
-                .build();
-
+        UserDTO userDTO = AuthMapper.registerRequestModelToUserDto(requestModel);
         TokenPairDTO tokenPairDTO = authService.register(userDTO);
-
         return AuthMapper.tokenPairDtoToTokenPairResponseModel(tokenPairDTO);
     }
 
     @POST
     @Path("/refresh")
     public TokenPairResponseModel refresh(RefreshRequestModel requestModel) {
-        TokenDTO tokenDTO = new TokenDTO(requestModel.getRefreshToken());
+        TokenDTO tokenDTO = AuthMapper.refreshRequestModelToTokenDTO(requestModel);
         TokenPairDTO tokenPairDTO = authService.refreshToken(tokenDTO);
-
         return AuthMapper.tokenPairDtoToTokenPairResponseModel(tokenPairDTO);
     }
 
