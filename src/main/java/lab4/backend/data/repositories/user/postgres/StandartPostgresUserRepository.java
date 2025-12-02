@@ -19,29 +19,26 @@ public class StandartPostgresUserRepository implements PostgresUserRepository {
     private EntityManager em;
 
     @Override
-    public UserDTO createUser(UserDTO userDTO) {
-        UserEntity userEntity = UserMapper.dtoToEntity(userDTO);
-        em.persist(userEntity);
+    public UserEntity createUser(UserEntity user) {;
+        em.persist(user);
         em.flush();
-        return UserMapper.entityToDTO(userEntity);
+        return user;
     }
 
     @Override
-    public UserDTO getUserByName(String name) {
+    public UserEntity findUserByName(String name) {
         UserEntity userEntity = em
                 .createQuery("select u from UserEntity u where u.username=:username", UserEntity.class)
                 .setParameter("username", name)
                 .getSingleResult();
 
-        return UserMapper.entityToDTO(userEntity);
+        return userEntity;
     }
 
     @Override
-    public List<UserDTO> getAllUsers() {
+    public List<UserEntity> getAllUsers() {
         List<UserEntity> entities = em.createQuery("select u from UserEntity u", UserEntity.class).getResultList();
 
-        return entities.stream()
-                .map(UserMapper::entityToDTO)
-                .collect(Collectors.toList());
+        return entities;
     }
 }

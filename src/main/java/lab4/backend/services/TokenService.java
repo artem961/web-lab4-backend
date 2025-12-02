@@ -15,6 +15,7 @@ import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.TokenPayloadDTO;
 import lab4.backend.dto.UserDTO;
+import lab4.backend.utils.mapping.TokenMapper;
 import lombok.var;
 
 import java.security.Key;
@@ -47,7 +48,7 @@ public class TokenService {
         TokenDTO accessToken = generateAccessToken(payload);
         TokenDTO refreshToken = generateRefreshToken(payload);
 
-        postgresTokenRepository.saveToken(refreshToken);
+        postgresTokenRepository.saveToken(TokenMapper.dtoToEntity(refreshToken));
 
         return TokenPairDTO.builder()
                 .accessToken(accessToken)
@@ -87,8 +88,8 @@ public class TokenService {
             throw new RuntimeException("Invalid token");
         }
 
-        if (postgresTokenRepository.existsByToken(refreshToken)) {
-            postgresTokenRepository.delete(refreshToken);
+        if (postgresTokenRepository.existsByToken(TokenMapper.dtoToEntity(refreshToken))) {
+            postgresTokenRepository.delete(TokenMapper.dtoToEntity(refreshToken));
             return generateTokenPair(extractPayloadFromToken(refreshToken));
         }else{
             throw new RuntimeException("Token does not exist");
@@ -96,7 +97,7 @@ public class TokenService {
     }
 
     public void revokeToken(TokenDTO refreshToken) {
-        postgresTokenRepository.delete(refreshToken);
+        postgresTokenRepository.delete(TokenMapper.dtoToEntity(refreshToken));
     }
 
     private TokenDTO generateAccessToken(TokenPayloadDTO payload) {

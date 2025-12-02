@@ -1,16 +1,11 @@
 package lab4.backend.data.repositories.result.postgres;
 
-import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lab4.backend.data.entities.ResultEntity;
-import lab4.backend.dto.ResultDTO;
-import lab4.backend.utils.mapping.ResultMapper;
-
-
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Singleton
 public class StandartPostgresResultRepository implements PostgresResultRepository {
@@ -19,19 +14,17 @@ public class StandartPostgresResultRepository implements PostgresResultRepositor
 
 
     @Override
-    public void saveResult(ResultDTO resultDTO) {
-        em.persist(ResultMapper.dtoToEntity(resultDTO));
+    public void saveResult(ResultEntity entity) {
+        em.persist(entity);
     }
 
     @Override
-    public List<ResultDTO> getAllResults() {
+    public List<ResultEntity> getAllResults() {
         List<ResultEntity> results = em.createQuery(
                 "SELECT r FROM ResultEntity r",
                 ResultEntity.class).getResultList();
 
-        return results.stream()
-                .map(ResultMapper::entityToDTO)
-                .collect(Collectors.toList());
+        return results;
     }
 
     @Override

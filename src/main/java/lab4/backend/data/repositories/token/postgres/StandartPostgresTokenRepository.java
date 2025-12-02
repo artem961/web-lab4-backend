@@ -14,23 +14,22 @@ public class StandartPostgresTokenRepository implements PostgresTokenRepository 
     private EntityManager em;
 
     @Override
-    public TokenDTO saveToken(TokenDTO tokenDTO) {
-        TokenEntity tokenEntity = TokenMapper.dtoToEntity(tokenDTO);
-        em.persist(tokenEntity);
+    public TokenEntity saveToken(TokenEntity token) {
+        em.persist(token);
         em.flush();
-        return TokenMapper.entityToDTO(tokenEntity);
+        return token;
     }
 
     @Override
-    public Boolean existsByToken(TokenDTO tokenDTO) {
-        String token = tokenDTO.getToken();
+    public Boolean existsByToken(TokenEntity token) {
+        String tokenString = token.getToken();
 
         try {
             TokenEntity foundToken = em.createQuery(
                             "SELECT t FROM TokenEntity t WHERE t.token = :token",
                             TokenEntity.class
                     )
-                    .setParameter("token", token)
+                    .setParameter("token", tokenString)
                     .getSingleResult();
 
             return foundToken != null;
@@ -41,10 +40,10 @@ public class StandartPostgresTokenRepository implements PostgresTokenRepository 
     }
 
     @Override
-    public void delete(TokenDTO tokenDTO) {
-        String token = tokenDTO.getToken();
+    public void delete(TokenEntity token) {
+        String tokenString = token.getToken();
         em.createQuery("delete from TokenEntity where token=:token")
-                .setParameter("token", token)
+                .setParameter("token", tokenString)
                 .executeUpdate();
     }
 }

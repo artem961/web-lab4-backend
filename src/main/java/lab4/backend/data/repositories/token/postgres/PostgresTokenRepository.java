@@ -1,9 +1,9 @@
 package lab4.backend.data.repositories.token.postgres;
 
-import lab4.backend.dto.TokenDTO;
+import lab4.backend.data.entities.TokenEntity;
 
 public interface PostgresTokenRepository {
-    public TokenDTO saveToken(TokenDTO tokenDTO);
-    public Boolean existsByToken(TokenDTO tokenDTO);
-    public void delete(TokenDTO tokenDTO);
+    public TokenEntity saveToken(TokenEntity token);
+    public Boolean existsByToken(TokenEntity token);
+    public void delete(TokenEntity token);
 }
