@@ -18,6 +18,7 @@ import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.UserDTO;
 import lab4.backend.services.AuthService;
+import lab4.backend.services.exceptions.ServiceException;
 import lombok.extern.java.Log;
 
 @Path("/auth")
@@ -31,37 +32,54 @@ public class AuthResource {
     @POST
     @Path("/login")
     public Response login(LoginRequestModel requestModel) {
-        UserDTO userDTO = AuthMapper.loginRequestModelToUserDto(requestModel);
-        TokenPairDTO tokenPairDTO = authService.authenticate(userDTO);
-        return createTokenResponse(tokenPairDTO);
+        try {
+            UserDTO userDTO = AuthMapper.loginRequestModelToUserDto(requestModel);
+            TokenPairDTO tokenPairDTO = authService.authenticate(userDTO);
+            return createTokenPairResponse(tokenPairDTO);
+        } catch (ServiceException e) {
+            return createErrorResponse(e);
+        }
     }
 
     @POST
     @Path("/register")
-    public TokenPairResponseModel register(RegisterRequestModel requestModel) {
-        UserDTO userDTO = AuthMapper.registerRequestModelToUserDto(requestModel);
-        TokenPairDTO tokenPairDTO = authService.register(userDTO);
-        return AuthMapper.tokenPairDtoToTokenPairResponseModel(tokenPairDTO);
+    public Response register(RegisterRequestModel requestModel) {
+        try {
+            UserDTO userDTO = AuthMapper.registerRequestModelToUserDto(requestModel);
+            TokenPairDTO tokenPairDTO = authService.register(userDTO);
+            return createTokenPairResponse(tokenPairDTO);
+        } catch (ServiceException e) {
+            return createErrorResponse(e);
+        }
     }
 
     @POST
     @Path("/refresh")
-    public TokenPairResponseModel refresh(RefreshRequestModel requestModel) {
-        TokenDTO tokenDTO = AuthMapper.refreshRequestModelToTokenDTO(requestModel);
-        TokenPairDTO tokenPairDTO = authService.refreshToken(tokenDTO);
-        return AuthMapper.tokenPairDtoToTokenPairResponseModel(tokenPairDTO);
+    public Response refresh(RefreshRequestModel requestModel) {
+        try {
+            TokenDTO tokenDTO = AuthMapper.refreshRequestModelToTokenDTO(requestModel);
+            TokenPairDTO tokenPairDTO = authService.refreshToken(tokenDTO);
+            return createTokenPairResponse(tokenPairDTO);
+        } catch (ServiceException e) {
+            return createErrorResponse(e);
+        }
     }
 
     @POST
     @Path("/logout")
-    public void logout(LogoutRequestModel requestModel) {
-        TokenDTO tokenDTO = TokenDTO.builder()
-                .token(requestModel.getRefreshToken())
-                .build();
-        authService.logout(tokenDTO);
+    public Response logout(LogoutRequestModel requestModel) {
+        try {
+            TokenDTO tokenDTO = TokenDTO.builder()
+                    .token(requestModel.getRefreshToken())
+                    .build();
+            authService.logout(tokenDTO);
+            return Response.noContent().build();
+        } catch (ServiceException e) {
+            return createErrorResponse(e);
+        }
     }
 
-    private NewCookie createCookie(TokenDTO token){
+    private NewCookie createCookie(TokenDTO token) {
         return new NewCookie.Builder("refresh-token")
                 .value(token.getToken())
                 .maxAge(token.getExpires().intValue())
@@ -71,10 +89,10 @@ public class AuthResource {
                 .build();
     }
 
-    private Response createTokenResponse(TokenPairDTO tokenPairDTO){
+    private Response createTokenPairResponse(TokenPairDTO tokenPairDTO) {
         TokenPairResponseModel responseModel = TokenPairResponseModel.builder()
                 .accessToken(tokenPairDTO.getAccessToken().getToken())
-                .refreshToken(tokenPairDTO.getRefreshToken().getToken())
+               // .refreshToken(tokenPairDTO.getRefreshToken().getToken())
                 .tokenType(tokenPairDTO.getTokenType())
                 .build();
 
@@ -83,6 +101,13 @@ public class AuthResource {
         return Response
                 .ok(responseModel)
                 .cookie(refreshTokenCookie)
+                .build();
+    }
+
+    private Response createErrorResponse(ServiceException e) {
+        return Response
+                .status(Response.Status.BAD_REQUEST)
+                .entity(e.getMessage())
                 .build();
     }
 }
