@@ -3,6 +3,7 @@ package lab4.backend.services.utils.annotations;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
+import lab4.backend.services.exceptions.FatalServerException;
 import lab4.backend.services.exceptions.ServiceException;
 import lombok.extern.java.Log;
 
@@ -25,8 +26,7 @@ public class ServiceExceptionInterceptor {
 
             ExceptionMessage annotation = getExceptionMessageAnnotation(ctx);
             String message = getMessage(annotation, ctx);
-            throw new ServiceException(message, e);
-
+            throw new FatalServerException(message + ": " + e.getMessage(), e);
         }
     }
 

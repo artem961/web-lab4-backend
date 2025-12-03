@@ -6,24 +6,23 @@ import lab4.backend.data.entities.UserEntity;
 import lab4.backend.data.repositories.user.postgres.PostgresUserRepository;
 import lab4.backend.dto.UserDTO;
 import lab4.backend.services.exceptions.ServiceException;
-import lab4.backend.services.utils.annotations.ExceptionMessage;
-import lab4.backend.services.utils.annotations.WrapWithServiceException;
 import lab4.backend.utils.mapping.UserMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
-@WrapWithServiceException
-@ExceptionMessage
 public class UserService {
     @EJB
     private PostgresUserRepository postgresUserRepository;
 
     public UserDTO createUser(UserDTO userDTO) {
-        return UserMapper.entityToDTO(
-                postgresUserRepository.createUser(UserMapper.dtoToEntity(userDTO)));
-
+        try {
+            return UserMapper.entityToDTO(
+                    postgresUserRepository.createUser(UserMapper.dtoToEntity(userDTO)));
+        } catch (Exception e){
+            throw new ServiceException("User already exists");
+        }
     }
 
     public UserDTO findUserByName(String name) {
@@ -36,6 +35,5 @@ public class UserService {
         return postgresUserRepository.getAllUsers().stream()
                 .map(UserMapper::entityToDTO)
                 .collect(Collectors.toList());
-
     }
 }

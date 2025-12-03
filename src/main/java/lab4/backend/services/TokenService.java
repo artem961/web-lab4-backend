@@ -1,9 +1,6 @@
 package lab4.backend.services;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
@@ -72,7 +69,7 @@ public class TokenService {
 
     public TokenPayloadDTO extractPayloadFromToken(TokenDTO token) {
         try {
-            var claims = jwtParser.parseClaimsJws(token.getToken()).getBody();
+            Claims claims = extractClaimsFromToken(token);
 
             return TokenPayloadDTO.builder()
                     .userId((Integer) claims.get("userId"))
@@ -83,19 +80,28 @@ public class TokenService {
         }
     }
 
-    public TokenPairDTO refreshToken(TokenDTO refreshToken) {
-        if (!isRefreshToken(refreshToken)) {
-            throw new ServiceException("Token is not a refresh token");
+    public Claims extractClaimsFromToken(TokenDTO token) {
+        try {
+            Claims claims = jwtParser.parseClaimsJws(token.getToken()).getBody();
+            return claims;
+        } catch (JwtException e) {
+            throw new ServiceException("Invalid token: " + e.getMessage());
         }
+    }
 
+    public TokenPairDTO refreshToken(TokenDTO refreshToken) {
         if (!validateToken(refreshToken)) {
             throw new ServiceException("Invalid token");
+        }
+
+        if (!isRefreshToken(refreshToken)) {
+            throw new ServiceException("Token is not a refresh token");
         }
 
         if (postgresTokenRepository.existsByToken(TokenMapper.dtoToEntity(refreshToken))) {
             postgresTokenRepository.delete(TokenMapper.dtoToEntity(refreshToken));
             return generateTokenPair(extractPayloadFromToken(refreshToken));
-        }else{
+        } else {
             throw new ServiceException("Token does not exist");
         }
     }
@@ -152,7 +158,7 @@ public class TokenService {
 
     public boolean isRefreshToken(TokenDTO token) {
         try {
-            var claims = jwtParser.parseClaimsJws(token.getToken()).getBody();
+            Claims claims = extractClaimsFromToken(token);
             return "refresh".equals(claims.get("token_type"));
         } catch (JwtException e) {
             return false;
@@ -161,7 +167,7 @@ public class TokenService {
 
     public boolean isAccessToken(TokenDTO token) {
         try {
-            var claims = jwtParser.parseClaimsJws(token.getToken()).getBody();
+            Claims claims = extractClaimsFromToken(token);
             return "access".equals(claims.get("token_type"));
         } catch (JwtException e) {
             return false;
