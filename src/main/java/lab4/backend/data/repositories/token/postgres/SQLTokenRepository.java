@@ -5,11 +5,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import lab4.backend.data.entities.TokenEntity;
-import lab4.backend.dto.TokenDTO;
-import lab4.backend.utils.mapping.TokenMapper;
 
 @Singleton
-public class StandartPostgresTokenRepository implements PostgresTokenRepository {
+public class SQLTokenRepository implements TokenRepository {
     @PersistenceContext
     private EntityManager em;
 

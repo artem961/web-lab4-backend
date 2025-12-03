@@ -7,11 +7,10 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.inject.Inject;
 import lab4.backend.configuration.JWTConfig;
-import lab4.backend.data.repositories.token.postgres.PostgresTokenRepository;
+import lab4.backend.data.repositories.token.postgres.TokenRepository;
 import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.TokenPayloadDTO;
-import lab4.backend.dto.UserDTO;
 import lab4.backend.services.exceptions.ServiceException;
 import lab4.backend.services.utils.annotations.ExceptionMessage;
 import lab4.backend.services.utils.annotations.WrapWithServiceException;
@@ -31,7 +30,7 @@ public class TokenService {
     private JWTConfig jwtConfig;
 
     @EJB
-    private PostgresTokenRepository postgresTokenRepository;
+    private TokenRepository tokenRepository;
 
     private Key signingKey;
     private JwtParser jwtParser;
@@ -49,7 +48,7 @@ public class TokenService {
         TokenDTO accessToken = generateAccessToken(payload);
         TokenDTO refreshToken = generateRefreshToken(payload);
 
-        postgresTokenRepository.saveToken(TokenMapper.dtoToEntity(refreshToken));
+        tokenRepository.saveToken(TokenMapper.dtoToEntity(refreshToken));
 
         return TokenPairDTO.builder()
                 .accessToken(accessToken)
@@ -98,8 +97,8 @@ public class TokenService {
             throw new ServiceException("Token is not a refresh token");
         }
 
-        if (postgresTokenRepository.existsByToken(TokenMapper.dtoToEntity(refreshToken))) {
-            postgresTokenRepository.delete(TokenMapper.dtoToEntity(refreshToken));
+        if (tokenRepository.existsByToken(TokenMapper.dtoToEntity(refreshToken))) {
+            tokenRepository.delete(TokenMapper.dtoToEntity(refreshToken));
             return generateTokenPair(extractPayloadFromToken(refreshToken));
         } else {
             throw new ServiceException("Token does not exist");
@@ -107,7 +106,7 @@ public class TokenService {
     }
 
     public void revokeToken(TokenDTO refreshToken) {
-        postgresTokenRepository.delete(TokenMapper.dtoToEntity(refreshToken));
+        tokenRepository.delete(TokenMapper.dtoToEntity(refreshToken));
     }
 
     private TokenDTO generateAccessToken(TokenPayloadDTO payload) {

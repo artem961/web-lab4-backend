@@ -8,7 +8,7 @@ import java.util.List;
 
 
 @Singleton
-public class StandartPostgresResultRepository implements PostgresResultRepository {
+public class SQLResultRepository implements ResultRepository {
     @PersistenceContext
     private EntityManager em;
 
