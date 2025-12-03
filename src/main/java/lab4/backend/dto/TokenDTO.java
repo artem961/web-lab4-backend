@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.util.Date;
 
 @Data
@@ -14,5 +15,5 @@ import java.util.Date;
 @Builder
 public class TokenDTO {
     private String token;
-    private Long expires;
+    private Duration maxAge;
 }

@@ -86,7 +86,7 @@ public class AuthResource {
     private NewCookie createCookie(TokenDTO token) {
         return new NewCookie.Builder("refresh-token")
                 .value(token.getToken())
-                .maxAge(token.getExpires().intValue())
+                .maxAge(Long.valueOf(token.getMaxAge().toSeconds()).intValue())
                 .path("/")
                 .sameSite(NewCookie.SameSite.LAX)
                 .httpOnly(true)

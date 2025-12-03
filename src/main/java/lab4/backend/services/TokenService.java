@@ -15,6 +15,7 @@ import lab4.backend.services.exceptions.ServiceException;
 import lab4.backend.services.utils.annotations.ExceptionMessage;
 import lab4.backend.services.utils.annotations.WrapWithServiceException;
 import lab4.backend.utils.mapping.TokenMapper;
+import lombok.extern.java.Log;
 
 import java.security.Key;
 import java.time.Instant;
@@ -25,6 +26,7 @@ import java.util.Map;
 @Singleton
 @WrapWithServiceException
 @ExceptionMessage
+@Log
 public class TokenService {
     @Inject
     private JWTConfig jwtConfig;
@@ -129,7 +131,7 @@ public class TokenService {
 
         return TokenDTO.builder()
                 .token(token)
-                .expires(expires.getTime() / 1000)
+                .maxAge(jwtConfig.getAccessTokenExpiration())
                 .build();
     }
 
@@ -139,7 +141,7 @@ public class TokenService {
         claims.put("userId", payload.getUserId());
         claims.put("username", payload.getUsername());
 
-        Date expires = Date.from(Instant.now().plus(jwtConfig.getAccessTokenExpiration()));
+        Date expires = Date.from(Instant.now().plus(jwtConfig.getRefreshTokenExpiration()));
 
         String token = Jwts.builder()
                 .setClaims(claims)
@@ -150,10 +152,9 @@ public class TokenService {
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
 
-
         return TokenDTO.builder()
                 .token(token)
-                .expires(expires.getTime() / 1000)
+                .maxAge(jwtConfig.getRefreshTokenExpiration())
                 .build();
     }
 
