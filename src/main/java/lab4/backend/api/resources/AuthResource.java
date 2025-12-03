@@ -1,10 +1,7 @@
 package lab4.backend.api.resources;
 
 import jakarta.ejb.EJB;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.NewCookie;
 import jakarta.ws.rs.core.Response;
@@ -19,6 +16,7 @@ import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.UserDTO;
 import lab4.backend.services.AuthService;
 import lab4.backend.services.exceptions.ServiceException;
+import lombok.NonNull;
 import lombok.extern.java.Log;
 
 @Path("/auth")
@@ -55,9 +53,12 @@ public class AuthResource {
 
     @POST
     @Path("/refresh")
-    public Response refresh(RefreshRequestModel requestModel) {
+    public Response refresh(@CookieParam("refresh-token") String refreshToken) {
         try {
-            TokenDTO tokenDTO = AuthMapper.refreshRequestModelToTokenDTO(requestModel);
+            if (refreshToken == null) {
+                throw new ServiceException("Refresh token not found");
+            }
+            TokenDTO tokenDTO = TokenDTO.builder().token(refreshToken).build();
             TokenPairDTO tokenPairDTO = authService.refreshToken(tokenDTO);
             return createTokenPairResponse(tokenPairDTO);
         } catch (ServiceException e) {
@@ -67,10 +68,13 @@ public class AuthResource {
 
     @POST
     @Path("/logout")
-    public Response logout(LogoutRequestModel requestModel) {
+    public Response logout(@CookieParam("refresh-token") String refreshToken) {
         try {
+            if (refreshToken == null) {
+                throw new ServiceException("Refresh token not found");
+            }
             TokenDTO tokenDTO = TokenDTO.builder()
-                    .token(requestModel.getRefreshToken())
+                    .token(refreshToken)
                     .build();
             authService.logout(tokenDTO);
             return Response.noContent().build();
