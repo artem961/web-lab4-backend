@@ -27,12 +27,16 @@ public class AuthFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext containerRequestContext) {
-        AuthorizationHeader authHeader = new AuthorizationHeader(
-                containerRequestContext.getHeaderString("Authorization"));
+        try {
+            AuthorizationHeader authHeader = new AuthorizationHeader(
+                    containerRequestContext.getHeaderString("Authorization"));
 
-        if (authHeader.getTokenType().equalsIgnoreCase("Bearer")) {
-            processBearerToken(containerRequestContext, authHeader.getToken());
-        } else {
+            if (authHeader.getTokenType().equalsIgnoreCase("Bearer")) {
+                processBearerToken(containerRequestContext, authHeader.getToken());
+            } else {
+                abortWithUnauthorized(containerRequestContext);
+            }
+        } catch (Exception e) {
             abortWithUnauthorized(containerRequestContext);
         }
     }
@@ -42,7 +46,6 @@ public class AuthFilter implements ContainerRequestFilter {
         tokenDTO.setToken(bearerToken);
 
         TokenPayloadDTO payloadDTO = authService.authorize(tokenDTO);
-        log.info(payloadDTO.toString());
     }
 
     private void abortWithUnauthorized(ContainerRequestContext containerRequestContext) {
