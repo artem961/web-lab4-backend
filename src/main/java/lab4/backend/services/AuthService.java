@@ -4,6 +4,7 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;
+import lab4.backend.dto.TokenPayloadDTO;
 import lab4.backend.dto.UserDTO;
 import lab4.backend.services.exceptions.ServiceException;
 import lab4.backend.services.utils.annotations.ExceptionMessage;
@@ -27,6 +28,15 @@ public class AuthService {
             return tokenService.generateTokenPair(UserMapper.userDTOToTokenPayloadDTO(bdUser));
         } else{
             throw new ServiceException("Invalid password");
+        }
+    }
+
+    public TokenPayloadDTO authorize(TokenDTO accessToken) {
+        tokenService.validateToken(accessToken);
+        if (tokenService.isAccessToken(accessToken)){
+            return tokenService.extractPayloadFromToken(accessToken);
+        } else {
+            throw new ServiceException("Token is not an access token");
         }
     }
 
