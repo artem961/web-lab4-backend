@@ -38,7 +38,10 @@ public class AuthFilter implements ContainerRequestFilter {
     }
 
     private void processBearerToken(ContainerRequestContext containerRequestContext, String bearerToken) {
-        TokenPayloadDTO payloadDTO = authService.authorize(new TokenDTO(bearerToken));
+        TokenDTO tokenDTO = new TokenDTO();
+        tokenDTO.setToken(bearerToken);
+
+        TokenPayloadDTO payloadDTO = authService.authorize(tokenDTO);
         log.info(payloadDTO.toString());
     }
 

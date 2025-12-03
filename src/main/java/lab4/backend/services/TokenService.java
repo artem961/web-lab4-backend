@@ -115,20 +115,21 @@ public class TokenService {
         claims.put("userId", payload.getUserId());
         claims.put("username", payload.getUsername());
 
+        Date expires = Date.from(Instant.now().plus(jwtConfig.getAccessTokenExpiration()));
+
         String token = Jwts.builder()
                 .setClaims(claims)
                 .issuer(jwtConfig.getIssuer())
                 .setSubject(payload.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(Date.from(
-                        Instant.now().plus(jwtConfig.getAccessTokenExpiration())
-                ))
+                .setExpiration(expires)
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
 
 
         return TokenDTO.builder()
                 .token(token)
+                .expires(expires.getTime() / 1000)
                 .build();
     }
 
@@ -138,20 +139,21 @@ public class TokenService {
         claims.put("userId", payload.getUserId());
         claims.put("username", payload.getUsername());
 
+        Date expires = Date.from(Instant.now().plus(jwtConfig.getAccessTokenExpiration()));
+
         String token = Jwts.builder()
                 .setClaims(claims)
                 .issuer(jwtConfig.getIssuer())
                 .setSubject(payload.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(Date.from(
-                        Instant.now().plus(jwtConfig.getRefreshTokenExpiration())
-                ))
+                .setExpiration(expires)
                 .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
 
 
         return TokenDTO.builder()
                 .token(token)
+                .expires(expires.getTime() / 1000)
                 .build();
     }
 

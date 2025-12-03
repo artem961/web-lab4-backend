@@ -34,7 +34,9 @@ public class AuthMapper {
     }
 
     public static TokenDTO refreshRequestModelToTokenDTO(RefreshRequestModel requestModel){
-        return new TokenDTO(requestModel.getRefreshToken());
+        return TokenDTO.builder()
+                .token(requestModel.getRefreshToken())
+                .build();
     }
 
 }

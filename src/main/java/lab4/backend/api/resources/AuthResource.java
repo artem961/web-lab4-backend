@@ -6,6 +6,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.NewCookie;
+import jakarta.ws.rs.core.Response;
 import lab4.backend.api.models.auth.request.LoginRequestModel;
 import lab4.backend.api.models.auth.request.LogoutRequestModel;
 import lab4.backend.api.models.auth.request.RefreshRequestModel;
@@ -28,10 +30,10 @@ public class AuthResource {
 
     @POST
     @Path("/login")
-    public TokenPairResponseModel login(LoginRequestModel requestModel) {
+    public Response login(LoginRequestModel requestModel) {
         UserDTO userDTO = AuthMapper.loginRequestModelToUserDto(requestModel);
         TokenPairDTO tokenPairDTO = authService.authenticate(userDTO);
-        return AuthMapper.tokenPairDtoToTokenPairResponseModel(tokenPairDTO);
+        return createTokenResponse(tokenPairDTO);
     }
 
     @POST
@@ -53,7 +55,34 @@ public class AuthResource {
     @POST
     @Path("/logout")
     public void logout(LogoutRequestModel requestModel) {
-        TokenDTO tokenDTO = new TokenDTO(requestModel.getRefreshToken());
+        TokenDTO tokenDTO = TokenDTO.builder()
+                .token(requestModel.getRefreshToken())
+                .build();
         authService.logout(tokenDTO);
+    }
+
+    private NewCookie createCookie(TokenDTO token){
+        return new NewCookie.Builder("refresh-token")
+                .value(token.getToken())
+                .maxAge(token.getExpires().intValue())
+                .path("/")
+                .sameSite(NewCookie.SameSite.LAX)
+                .httpOnly(true)
+                .build();
+    }
+
+    private Response createTokenResponse(TokenPairDTO tokenPairDTO){
+        TokenPairResponseModel responseModel = TokenPairResponseModel.builder()
+                .accessToken(tokenPairDTO.getAccessToken().getToken())
+                .refreshToken(tokenPairDTO.getRefreshToken().getToken())
+                .tokenType(tokenPairDTO.getTokenType())
+                .build();
+
+        NewCookie refreshTokenCookie = createCookie(tokenPairDTO.getRefreshToken());
+
+        return Response
+                .ok(responseModel)
+                .cookie(refreshTokenCookie)
+                .build();
     }
 }
