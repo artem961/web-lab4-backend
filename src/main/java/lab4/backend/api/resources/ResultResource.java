@@ -2,6 +2,7 @@ package lab4.backend.api.resources;
 
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.MediaType;
 import lab4.backend.api.utils.filters.auth.AuthorizedOnly;
 import lab4.backend.api.models.result.request.DotRequestModel;
@@ -9,6 +10,9 @@ import lab4.backend.api.models.result.response.ResultResponseModel;
 import lab4.backend.api.utils.mapping.ResultMapper;
 import lab4.backend.dto.DotDTO;
 import lab4.backend.dto.ResultDTO;
+import lab4.backend.dto.TokenDTO;
+import lab4.backend.dto.UserDTO;
+import lab4.backend.services.AuthService;
 import lab4.backend.services.ResultService;
 import lombok.extern.java.Log;
 
@@ -24,11 +28,16 @@ public class ResultResource {
     @EJB
     private ResultService resultService;
 
+    @EJB
+    private AuthService authService;
+
     @POST
     @Path("/check")
-    public ResultResponseModel checkHit(DotRequestModel requestModel) {
+    public ResultResponseModel checkHit(DotRequestModel requestModel, @HeaderParam("Authorization") String header) {
+        String token = header.split(" ")[1];
         DotDTO dotDTO = ResultMapper.dotRequestModelToDotDTO(requestModel);
-        ResultDTO resultDTO = resultService.checkHit(dotDTO);
+        UserDTO userDTO = authService.getUserByToken(TokenDTO.builder().token(token).build());
+        ResultDTO resultDTO = resultService.checkHit(dotDTO, userDTO);
         return ResultMapper.resultDtoToResultResponseModel(resultDTO);
     }
 

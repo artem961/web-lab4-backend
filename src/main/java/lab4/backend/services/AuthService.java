@@ -52,4 +52,9 @@ public class AuthService {
     public void logout(TokenDTO refreshToken) {
         tokenService.revokeToken(refreshToken);
     }
+
+    public UserDTO getUserByToken(TokenDTO token) {
+        TokenPayloadDTO payload = tokenService.extractPayloadFromToken(token);
+        return userService.findUserById(payload.getUserId());
+    }
 }

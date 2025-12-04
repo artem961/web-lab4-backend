@@ -16,6 +16,7 @@ public class ResultMapper {
         resultDTO.setResult(resultEntity.getResult());
         resultDTO.setTime(resultEntity.getTime());
         resultDTO.setCurrentTime(resultEntity.getCurrentTime());
+        resultDTO.setUser(UserMapper.entityToDTO(resultEntity.getUser()));
 
         return resultDTO;
     }
@@ -29,6 +30,7 @@ public class ResultMapper {
         resultEntity.setResult(resultDTO.getResult());
         resultEntity.setTime(resultDTO.getTime());
         resultEntity.setCurrentTime(resultDTO.getCurrentTime());
+        resultEntity.setUser(UserMapper.dtoToEntity(resultDTO.getUser()));
 
         return resultEntity;
     }

@@ -1,6 +1,8 @@
 package lab4.backend.data.entities;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,4 +25,8 @@ public class ResultEntity {
     private Boolean result;
     private Long time;
     private LocalDateTime currentTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotNull
+    private UserEntity user;
 }

@@ -13,14 +13,14 @@ public class HitChecker {
         Boolean result = check(dotDTO.getX(), dotDTO.getY(), dotDTO.getR());
         Long endTime = System.nanoTime();
 
-        return new ResultDTO(
-                dotDTO.getX(),
-                dotDTO.getY(),
-                dotDTO.getR(),
-                result,
-                endTime - startTime,
-                LocalDateTime.now().withNano(0)
-        );
+        return ResultDTO.builder()
+                .x(dotDTO.getX())
+                .y(dotDTO.getY())
+                .r(dotDTO.getR())
+                .result(result)
+                .time(endTime - startTime)
+                .currentTime(LocalDateTime.now().withNano(0))
+                .build();
     }
 
     private static Boolean check(BigDecimal x, BigDecimal y, BigDecimal r) {

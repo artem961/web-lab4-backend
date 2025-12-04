@@ -37,6 +37,16 @@ public class SQLUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<UserEntity> findUserById(Integer id) {
+        try {
+            UserEntity userEntity = em.find(UserEntity.class, id);
+            return Optional.ofNullable(userEntity);
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public List<UserEntity> getAllUsers() {
         List<UserEntity> entities = em.createQuery("select u from UserEntity u", UserEntity.class).getResultList();
         return entities;

@@ -31,6 +31,12 @@ public class UserService {
         return UserMapper.entityToDTO(userEntity);
     }
 
+    public UserDTO findUserById(Integer id) {
+        UserEntity userEntity = userRepository.findUserById(id)
+                .orElseThrow(() -> new ServiceException(String.format("User with id %s not found", id)));
+        return UserMapper.entityToDTO(userEntity);
+    }
+
     public List<UserDTO> getAllUsers() {
         return userRepository.getAllUsers().stream()
                 .map(UserMapper::entityToDTO)

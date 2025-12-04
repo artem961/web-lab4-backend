@@ -8,5 +8,6 @@ import java.util.Optional;
 public interface UserRepository {
     UserEntity saveUser(UserEntity user);
     Optional<UserEntity> findUserByName(String name);
+    Optional<UserEntity> findUserById(Integer id);
     List<UserEntity> getAllUsers();
 }
