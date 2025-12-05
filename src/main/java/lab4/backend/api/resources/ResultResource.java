@@ -34,25 +34,30 @@ public class ResultResource {
     @POST
     @Path("/check")
     public ResultResponseModel checkHit(DotRequestModel requestModel, @HeaderParam("Authorization") String header) {
-        String token = header.split(" ")[1];
         DotDTO dotDTO = ResultMapper.dotRequestModelToDotDTO(requestModel);
-        UserDTO userDTO = authService.getUserByToken(TokenDTO.builder().token(token).build());
+        UserDTO userDTO = getUserFromHeader(header);
         ResultDTO resultDTO = resultService.checkHit(dotDTO, userDTO);
         return ResultMapper.resultDtoToResultResponseModel(resultDTO);
     }
 
     @GET
-    @Path("/all")
-    public List<ResultResponseModel> getAllResults() {
-        return resultService.getAllResults().stream()
+        @Path("/all")
+    public List<ResultResponseModel> getAllResults(@HeaderParam("Authorization") String header) {
+        UserDTO userDTO = getUserFromHeader(header);
+        return resultService.getAllResultsForUser(userDTO).stream()
                 .map(ResultMapper::resultDtoToResultResponseModel)
                 .collect(Collectors.toList());
     }
 
     @DELETE
     @Path("/all")
-    public void deleteAllResults() {
-        resultService.deleteAllResults();
+    public void deleteAllResults(@HeaderParam("Authorization") String header) {
+        UserDTO userDTO = getUserFromHeader(header);
+        resultService.deleteAllResultsForUser(userDTO);
     }
 
+    private UserDTO getUserFromHeader(String header) {
+        String token = header.split(" ")[1];
+        return authService.getUserByToken(TokenDTO.builder().token(token).build());
+    }
 }

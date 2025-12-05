@@ -4,6 +4,7 @@ import jakarta.ejb.Singleton;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lab4.backend.data.entities.ResultEntity;
+
 import java.util.List;
 
 
@@ -28,7 +29,24 @@ public class SQLResultRepository implements ResultRepository {
     }
 
     @Override
+    public List<ResultEntity> getAllResultsForUser(Integer userId) {
+        List<ResultEntity> results = em.createQuery(
+                        "SELECT r FROM ResultEntity r WHERE r.user.id=:userId", ResultEntity.class)
+                .setParameter("userId", userId)
+                .getResultList();
+
+        return results;
+    }
+
+    @Override
     public void deleteAllResults() {
         em.createQuery("DELETE FROM ResultEntity").executeUpdate();
+    }
+
+    @Override
+    public void deleteAllForUser(Integer userId) {
+        em.createQuery("DELETE FROM ResultEntity r WHERE r.user.id=:userId")
+                .setParameter("userId", userId)
+                .executeUpdate();
     }
 }

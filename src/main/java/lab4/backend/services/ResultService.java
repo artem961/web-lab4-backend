@@ -35,7 +35,17 @@ public class ResultService {
                 .collect(Collectors.toList());
     }
 
+    public List<ResultDTO> getAllResultsForUser(UserDTO user) {
+        return resultRepository.getAllResultsForUser(user.getId()).stream()
+                .map(ResultMapper::entityToDTO)
+                .collect(Collectors.toList());
+    }
+
     public void deleteAllResults() {
         resultRepository.deleteAllResults();
+    }
+
+    public void deleteAllResultsForUser(UserDTO user) {
+        resultRepository.deleteAllForUser(user.getId());
     }
 }
