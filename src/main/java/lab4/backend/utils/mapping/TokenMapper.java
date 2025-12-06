@@ -1,6 +1,5 @@
 package lab4.backend.utils.mapping;
 
-import lab4.backend.api.models.auth.response.TokenPairResponseModel;
 import lab4.backend.data.entities.TokenEntity;
 import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;

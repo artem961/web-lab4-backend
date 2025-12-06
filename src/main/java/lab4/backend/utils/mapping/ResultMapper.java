@@ -1,7 +1,5 @@
 package lab4.backend.utils.mapping;
 
-import jakarta.ejb.Singleton;
-import lab4.backend.api.models.result.response.ResultResponseModel;
 import lab4.backend.data.entities.ResultEntity;
 import lab4.backend.dto.ResultDTO;
 

@@ -28,47 +28,29 @@ public class AuthFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext containerRequestContext) {
         try {
-            AuthorizationHeader authHeader = new AuthorizationHeader(
-                    containerRequestContext.getHeaderString("Authorization"));
+            AuthorizationHeader authHeader =
+                    new AuthorizationHeader(containerRequestContext.getHeaderString("Authorization"));
 
             if (authHeader.getTokenType().equalsIgnoreCase("Bearer")) {
                 processBearerToken(containerRequestContext, authHeader.getToken());
             } else {
-                abortWithUnauthorized(containerRequestContext);
+                abortWithUnauthorized(containerRequestContext, "Token type is not supported");
             }
         } catch (Exception e) {
-            abortWithUnauthorized(containerRequestContext);
+            abortWithUnauthorized(containerRequestContext, e.getMessage());
         }
     }
 
     private void processBearerToken(ContainerRequestContext containerRequestContext, String bearerToken) {
         TokenDTO tokenDTO = new TokenDTO();
         tokenDTO.setToken(bearerToken);
-
         TokenPayloadDTO payloadDTO = authService.authorize(tokenDTO);
     }
 
-    private void abortWithUnauthorized(ContainerRequestContext containerRequestContext) {
-        containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
-    }
-
-    @Getter
-    private class AuthorizationHeader{
-        private String tokenType;
-        private String token;
-
-        public AuthorizationHeader(String header) {
-            try {
-                List<String> parsed = List.of(header.split("\\s"));
-                this.tokenType = parsed.get(0);
-                this.token = parsed.get(1);
-
-                if (parsed.size() != 2 || this.tokenType == null || this.token == null) {
-                    throw new Exception();
-                }
-            } catch (Exception e) {
-                throw new ServiceException("Authorization header is invalid");
-            }
-        }
+    private void abortWithUnauthorized(ContainerRequestContext containerRequestContext, String message) {
+        containerRequestContext.abortWith(Response
+                .status(Response.Status.UNAUTHORIZED)
+                .entity(message)
+                .build());
     }
 }
