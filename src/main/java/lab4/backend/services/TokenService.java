@@ -7,14 +7,18 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.inject.Inject;
 import lab4.backend.configuration.JWTConfig;
+import lab4.backend.data.entities.TokenEntity;
 import lab4.backend.data.repositories.token.postgres.TokenRepository;
+import lab4.backend.data.repositories.user.postgres.UserRepository;
 import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.TokenPayloadDTO;
+import lab4.backend.dto.UserDTO;
 import lab4.backend.services.exceptions.ServiceException;
 import lab4.backend.services.utils.annotations.ExceptionMessage;
 import lab4.backend.services.utils.annotations.WrapWithServiceException;
 import lab4.backend.utils.mapping.TokenMapper;
+import lab4.backend.utils.mapping.UserMapper;
 import lombok.extern.java.Log;
 
 import java.security.Key;
@@ -34,6 +38,9 @@ public class TokenService {
     @EJB
     private TokenRepository tokenRepository;
 
+    @EJB
+    private UserService userService;
+
     private Key signingKey;
     private JwtParser jwtParser;
 
@@ -46,9 +53,9 @@ public class TokenService {
                 .build();
     }
 
-    public TokenPairDTO generateTokenPair(TokenPayloadDTO payload) {
-        TokenDTO accessToken = generateAccessToken(payload);
-        TokenDTO refreshToken = generateRefreshToken(payload);
+    public TokenPairDTO generateTokenPair(UserDTO userDTO) {
+        TokenDTO accessToken = generateAccessToken(userDTO);
+        TokenDTO refreshToken = generateRefreshToken(userDTO);
 
         tokenRepository.saveToken(TokenMapper.dtoToEntity(refreshToken));
 
@@ -99,18 +106,24 @@ public class TokenService {
             throw new ServiceException("Token is not a refresh token");
         }
 
-        if (tokenRepository.existsByToken(TokenMapper.dtoToEntity(refreshToken))) {
-            tokenRepository.delete(TokenMapper.dtoToEntity(refreshToken));
-            return generateTokenPair(extractPayloadFromToken(refreshToken));
+        TokenDTO tokenDTO = findByToken(refreshToken.getToken());
+        if (!tokenDTO.getRevoked()) {
+            revokeToken(tokenDTO);
+            UserDTO userDTO = userService.findUserById(tokenDTO.getUser().getId());
+            return generateTokenPair(userDTO);
         } else {
-            throw new ServiceException("Token does not exist");
+            throw new ServiceException("Token is revoked");
         }
     }
 
     public void revokeToken(TokenDTO refreshToken) {
-        tokenRepository.delete(TokenMapper.dtoToEntity(refreshToken));
+        TokenEntity entity = TokenMapper.dtoToEntity(findByToken(refreshToken.getToken()));
+        entity.setRevoked(true);
+        System.out.println(entity);
+        tokenRepository.update(entity);
     }
 
+    @Deprecated
     private TokenDTO generateAccessToken(TokenPayloadDTO payload) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("token_type", "access");
@@ -135,6 +148,7 @@ public class TokenService {
                 .build();
     }
 
+    @Deprecated
     private TokenDTO generateRefreshToken(TokenPayloadDTO payload) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("token_type", "refresh");
@@ -158,6 +172,26 @@ public class TokenService {
                 .build();
     }
 
+    private TokenDTO generateRefreshToken(UserDTO userDTO) {
+        TokenPayloadDTO payload = UserMapper.userDTOToTokenPayloadDTO(userDTO);
+
+        TokenDTO refreshToken = generateRefreshToken(payload);
+        refreshToken.setRevoked(false);
+        refreshToken.setUser(userDTO);
+
+        return refreshToken;
+    }
+
+    private TokenDTO generateAccessToken(UserDTO userDTO) {
+        TokenPayloadDTO payload = UserMapper.userDTOToTokenPayloadDTO(userDTO);
+
+        TokenDTO accessToken = generateAccessToken(payload);
+        accessToken.setRevoked(false);
+        accessToken.setUser(userDTO);
+
+        return accessToken;
+    }
+
     public boolean isRefreshToken(TokenDTO token) {
         try {
             Claims claims = extractClaimsFromToken(token);
@@ -174,5 +208,11 @@ public class TokenService {
         } catch (JwtException e) {
             return false;
         }
+    }
+
+    public TokenDTO findByToken(String token) {
+        TokenEntity tokenEntity = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new ServiceException("Token not found"));
+        return TokenMapper.entityToDTO(tokenEntity);
     }
 }

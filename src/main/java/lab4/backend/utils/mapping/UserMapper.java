@@ -33,4 +33,13 @@ public class UserMapper {
 
         return tokenPayloadDTO;
     }
+
+    public static UserDTO tokenPayloadDTOToUserDTO(TokenPayloadDTO tokenPayloadDTO) {
+        return UserDTO.builder()
+                .id(tokenPayloadDTO.getUserId())
+                .username(tokenPayloadDTO.getUsername())
+                .build();
+    }
 }
+
+

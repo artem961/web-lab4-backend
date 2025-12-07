@@ -7,13 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Duration;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class TokenDTO {
+    private Integer id;
     private String token;
+    private Boolean revoked;
     private Duration maxAge;
+    private UserDTO user;
 }

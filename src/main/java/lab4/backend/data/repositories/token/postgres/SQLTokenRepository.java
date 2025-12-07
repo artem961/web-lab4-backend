@@ -5,6 +5,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import lab4.backend.data.entities.TokenEntity;
+import lab4.backend.dto.TokenDTO;
+
+import java.util.Optional;
 
 @Singleton
 public class SQLTokenRepository implements TokenRepository {
@@ -19,21 +22,19 @@ public class SQLTokenRepository implements TokenRepository {
     }
 
     @Override
-    public Boolean existsByToken(TokenEntity token) {
-        String tokenString = token.getToken();
-
+    public Optional<TokenEntity> findByToken(String token) {
         try {
             TokenEntity foundToken = em.createQuery(
                             "SELECT t FROM TokenEntity t WHERE t.token = :token",
                             TokenEntity.class
                     )
-                    .setParameter("token", tokenString)
+                    .setParameter("token", token)
                     .getSingleResult();
 
-            return foundToken != null;
+            return Optional.ofNullable(foundToken);
 
         } catch (NoResultException e) {
-            return false;
+            return Optional.empty();
         }
     }
 
@@ -43,5 +44,10 @@ public class SQLTokenRepository implements TokenRepository {
         em.createQuery("delete from TokenEntity where token=:token")
                 .setParameter("token", tokenString)
                 .executeUpdate();
+    }
+
+    @Override
+    public void update(TokenEntity token) {
+        em.merge(token);
     }
 }

@@ -25,7 +25,7 @@ public class AuthService {
     public TokenPairDTO authenticate(UserDTO userDTO) {
         UserDTO bdUser = userService.findUserByName(userDTO.getUsername());
         if (userDTO.getPassword().equals(bdUser.getPassword())){
-            return tokenService.generateTokenPair(UserMapper.userDTOToTokenPayloadDTO(bdUser));
+            return tokenService.generateTokenPair(bdUser);
         } else{
             throw new ServiceException("Invalid password");
         }
@@ -42,7 +42,7 @@ public class AuthService {
 
     public TokenPairDTO register(UserDTO userDTO) {
         userDTO = userService.createUser(userDTO);
-        return tokenService.generateTokenPair(UserMapper.userDTOToTokenPayloadDTO(userDTO));
+        return tokenService.generateTokenPair(userDTO);
     }
 
     public TokenPairDTO refreshToken(TokenDTO refreshToken) {
