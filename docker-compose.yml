@@ -43,7 +43,7 @@ services:
       - lab4-network
 
 networks:
-  app-network:
+  lab4-network:
     external: true
     name: lab4-network
 
