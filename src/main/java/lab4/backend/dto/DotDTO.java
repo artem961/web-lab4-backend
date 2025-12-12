@@ -26,7 +26,7 @@ public class DotDTO {
     private BigDecimal y;
 
     @NotNull
-    @Min(value = -4)
-    @Max(value = 4)
+    @Min(value = 1)
+    @Max(value = 6)
     private BigDecimal r;
 }
