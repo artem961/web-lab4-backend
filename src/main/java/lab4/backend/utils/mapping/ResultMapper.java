@@ -8,6 +8,7 @@ public class ResultMapper {
     public static ResultDTO entityToDTO(ResultEntity resultEntity) {
         ResultDTO resultDTO = new ResultDTO();
 
+        resultDTO.setId(resultEntity.getId());
         resultDTO.setX(resultEntity.getX());
         resultDTO.setY(resultEntity.getY());
         resultDTO.setR(resultEntity.getR());

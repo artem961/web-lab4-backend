@@ -2,10 +2,13 @@ package lab4.backend.services;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
+import jakarta.transaction.Transactional;
+import lab4.backend.data.entities.ResultEntity;
 import lab4.backend.data.repositories.result.postgres.ResultRepository;
 import lab4.backend.dto.ResultDTO;
 import lab4.backend.dto.DotDTO;
 import lab4.backend.dto.UserDTO;
+import lab4.backend.services.exceptions.ServiceException;
 import lab4.backend.services.utils.annotations.ExceptionMessage;
 import lab4.backend.services.utils.annotations.WrapWithServiceException;
 import lab4.backend.services.utils.HitChecker;
@@ -24,9 +27,9 @@ public class ResultService {
     public ResultDTO checkHit(DotDTO dotDTO, UserDTO user) {
         ResultDTO resultDTO = HitChecker.checkHit(dotDTO);
         resultDTO.setUser(user);
-        resultRepository.saveResult(
+        ResultEntity entity = resultRepository.saveResult(
                 ResultMapper.dtoToEntity(resultDTO));
-        return resultDTO;
+        return ResultMapper.entityToDTO(entity);
     }
 
     public List<ResultDTO> getAllResults() {
@@ -47,5 +50,17 @@ public class ResultService {
 
     public void deleteAllResultsForUser(UserDTO user) {
         resultRepository.deleteAllForUser(user.getId());
+    }
+
+    @Transactional
+    public void deleteResultById(UserDTO user, Integer id) {
+        ResultEntity result = resultRepository.getResultById(id)
+                .orElseThrow(() -> new ServiceException(String.format("Result with id %s not found", id)));
+
+        if (result.getUser().getId().equals(user.getId())) {
+            resultRepository.deleteById(id);
+        } else {
+            throw new ServiceException(String.format("User with id %s is not owner of result with id %s", user.getId(), id));
+        }
     }
 }

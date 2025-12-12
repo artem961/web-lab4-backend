@@ -2,10 +2,12 @@ package lab4.backend.data.repositories.result.postgres;
 
 import jakarta.ejb.Singleton;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lab4.backend.data.entities.ResultEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Singleton
@@ -15,8 +17,18 @@ public class SQLResultRepository implements ResultRepository {
 
 
     @Override
-    public void saveResult(ResultEntity entity) {
+    public ResultEntity saveResult(ResultEntity entity) {
         em.persist(entity);
+        em.flush();
+        return entity;
+    }
+
+    public Optional<ResultEntity> getResultById(Integer id) {
+        try {
+            return Optional.ofNullable(em.find(ResultEntity.class, id));
+        } catch (EntityNotFoundException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -47,6 +59,13 @@ public class SQLResultRepository implements ResultRepository {
     public void deleteAllForUser(Integer userId) {
         em.createQuery("DELETE FROM ResultEntity r WHERE r.user.id=:userId")
                 .setParameter("userId", userId)
+                .executeUpdate();
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        em.createQuery("DELETE FROM ResultEntity r WHERE r.id=:id")
+                .setParameter("id", id)
                 .executeUpdate();
     }
 }

@@ -24,18 +24,14 @@ public class AuthService {
     @Transactional
     @ExceptionMessage("Failed to authenticate user")
     public TokenPairDTO authenticate(UserDTO userDTO) {
-        UserDTO bdUser = userService.findUserByName(userDTO.getUsername());
-        if (userDTO.getPassword().equals(bdUser.getPassword())){
-            return tokenService.generateTokenPair(bdUser);
-        } else{
-            throw new ServiceException("Invalid password");
-        }
+        UserDTO bdUser = userService.getUserIfPasswordValid(userDTO);
+        return tokenService.generateTokenPair(bdUser);
     }
 
     @Transactional
     public TokenPayloadDTO authorize(TokenDTO accessToken) {
         tokenService.validateToken(accessToken);
-        if (tokenService.isAccessToken(accessToken)){
+        if (tokenService.isAccessToken(accessToken)) {
             return tokenService.extractPayloadFromToken(accessToken);
         } else {
             throw new ServiceException("Token is not an access token");

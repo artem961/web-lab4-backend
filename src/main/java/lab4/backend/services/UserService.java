@@ -46,4 +46,15 @@ public class UserService {
     public Boolean isUserExists(UserDTO userDTO) {
         return userRepository.findUserByName(userDTO.getUsername()).isPresent();
     }
+
+    public UserDTO getUserIfPasswordValid(UserDTO user) {
+        UserEntity userEntity = userRepository.findUserByName(user.getUsername())
+                .orElseThrow(() -> new ServiceException(String.format("User with name %s not found", user.getUsername())));
+
+        if (userEntity.getPassword().equals(user.getPassword())) {
+            return UserMapper.entityToDTO(userEntity);
+        } else{
+            throw new ServiceException("Invalid password");
+        }
+    }
 }

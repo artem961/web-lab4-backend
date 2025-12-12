@@ -4,6 +4,7 @@ import jakarta.ejb.EJB;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import lab4.backend.api.models.ResultResponseModel;
 import lab4.backend.api.utils.annotations.ApiExceptionHandler;
 import lab4.backend.api.utils.filters.auth.AuthorizationHeader;
@@ -47,10 +48,21 @@ public class ResultResource {
     }
 
     @GET
-    @Path("/all")
-    public List<ResultResponseModel> getAllResults(@HeaderParam("Authorization") String header) {
+    @Path("/all/me")
+    public List<ResultResponseModel> getAllMyResults(@HeaderParam("Authorization") String header) {
         UserDTO userDTO = getUserFromHeader(header);
         List<ResultDTO> results = resultService.getAllResultsForUser(userDTO);
+        List<ResultResponseModel> resultsModels = results.stream()
+                .map(ResultResponseModel::fromResultDTO)
+                .toList();
+        return resultsModels;
+    }
+
+    @GET
+    @Path("/all")
+    public List<ResultResponseModel> getAllResults(@HeaderParam("Authorization") String header) {
+
+        List<ResultDTO> results = resultService.getAllResults();
         List<ResultResponseModel> resultsModels = results.stream()
                 .map(ResultResponseModel::fromResultDTO)
                 .toList();
@@ -62,6 +74,16 @@ public class ResultResource {
     public void deleteAllResults(@HeaderParam("Authorization") String header) {
         UserDTO userDTO = getUserFromHeader(header);
         resultService.deleteAllResultsForUser(userDTO);
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response deleteResult(@PathParam("id") Integer id, @HeaderParam("Authorization") String header) {
+        UserDTO userDTO = getUserFromHeader(header);
+        resultService.deleteResultById(userDTO, id);
+        return Response
+                .noContent()
+                .build();
     }
 
     private UserDTO getUserFromHeader(String header) {

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class ResultDTO {
+    private Integer id;
     private BigDecimal x;
     private BigDecimal y;
     private BigDecimal r;

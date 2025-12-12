@@ -20,7 +20,7 @@ public class UserMapper {
 
         userDTO.setId(userEntity.getId());
         userDTO.setUsername(userEntity.getUsername());
-        userDTO.setPassword(userEntity.getPassword());
+       // userDTO.setPassword(userEntity.getPassword());
 
         return userDTO;
     }

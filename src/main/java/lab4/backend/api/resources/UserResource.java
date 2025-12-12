@@ -25,7 +25,6 @@ public class UserResource {
     @Path("/me")
     public Response getUser(@HeaderParam("Authorization") String header){
         UserDTO userDTO = getUserFromHeader(header);
-        userDTO.setPassword(null);
         return Response.ok(userDTO).build();
     }
 

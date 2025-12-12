@@ -15,21 +15,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class ResultResponseModel {
+    private Integer id;
     private BigDecimal x;
     private BigDecimal y;
     private BigDecimal r;
     private Boolean result;
     private Long time;
     private LocalDateTime currentTime;
+    private UserDTO user;
 
     public static ResultResponseModel fromResultDTO(ResultDTO resultDTO) {
-       return ResultResponseModel.builder()
+        return ResultResponseModel.builder()
                 .x(resultDTO.getX())
                 .y(resultDTO.getY())
                 .r(resultDTO.getR())
                 .result(resultDTO.getResult())
                 .currentTime(resultDTO.getCurrentTime())
                 .time(resultDTO.getTime())
+                .user(resultDTO.getUser())
+                .id(resultDTO.getId())
                 .build();
     }
 }
