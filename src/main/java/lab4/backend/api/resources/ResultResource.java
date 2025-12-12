@@ -1,6 +1,7 @@
 package lab4.backend.api.resources;
 
 import jakarta.ejb.EJB;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import lab4.backend.api.models.ResultResponseModel;
@@ -39,7 +40,7 @@ public class ResultResource {
 
     @POST
     @Path("/check")
-    public ResultResponseModel checkHit(DotDTO dotDTO, @HeaderParam("Authorization") String header) {
+    public ResultResponseModel checkHit(@Valid DotDTO dotDTO, @HeaderParam("Authorization") String header) {
         UserDTO userDTO = getUserFromHeader(header);
         ResultDTO resultDTO = resultService.checkHit(dotDTO, userDTO);
         return ResultResponseModel.fromResultDTO(resultDTO);
