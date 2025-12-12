@@ -16,13 +16,9 @@ import java.math.BigDecimal;
 @Builder
 public class DotDTO {
     @NotNull
-    @Min(value = -4)
-    @Max(value = 4)
     private BigDecimal x;
 
     @NotNull
-    @Min(value = -4)
-    @Max(value = 4)
     private BigDecimal y;
 
     @NotNull
