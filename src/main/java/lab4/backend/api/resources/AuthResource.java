@@ -12,6 +12,7 @@ import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.UserDTO;
 import lab4.backend.services.AuthService;
 import lab4.backend.services.exceptions.ServiceException;
+import lab4.backend.utils.mapping.PasswordHasher;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,6 +30,7 @@ public class AuthResource {
     @POST
     @Path("/login")
     public Response login(UserDTO userDTO) {
+        userDTO = PasswordHasher.hashPassword(userDTO);
         TokenPairDTO tokenPairDTO = authService.authenticate(userDTO);
         return createTokenPairResponse(tokenPairDTO);
     }
@@ -36,6 +38,7 @@ public class AuthResource {
     @POST
     @Path("/register")
     public Response register(UserDTO userDTO) {
+        userDTO = PasswordHasher.hashPassword(userDTO);
         TokenPairDTO tokenPairDTO = authService.register(userDTO);
         return createTokenPairResponse(tokenPairDTO);
     }

@@ -2,6 +2,7 @@ package lab4.backend.services;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
+import jakarta.transaction.Transactional;
 import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;
 import lab4.backend.dto.TokenPayloadDTO;
@@ -20,7 +21,7 @@ public class AuthService {
     @EJB
     private TokenService tokenService;
 
-
+    @Transactional
     @ExceptionMessage("Failed to authenticate user")
     public TokenPairDTO authenticate(UserDTO userDTO) {
         UserDTO bdUser = userService.findUserByName(userDTO.getUsername());
@@ -31,6 +32,7 @@ public class AuthService {
         }
     }
 
+    @Transactional
     public TokenPayloadDTO authorize(TokenDTO accessToken) {
         tokenService.validateToken(accessToken);
         if (tokenService.isAccessToken(accessToken)){
@@ -40,6 +42,7 @@ public class AuthService {
         }
     }
 
+    @Transactional
     public TokenPairDTO register(UserDTO userDTO) {
         userDTO = userService.createUser(userDTO);
         return tokenService.generateTokenPair(userDTO);
@@ -53,6 +56,7 @@ public class AuthService {
         tokenService.revokeToken(refreshToken);
     }
 
+    @Transactional
     public UserDTO getUserByToken(TokenDTO token) {
         TokenPayloadDTO payload = tokenService.extractPayloadFromToken(token);
         return userService.findUserById(payload.getUserId());

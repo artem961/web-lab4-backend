@@ -6,6 +6,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lab4.backend.configuration.JWTConfig;
 import lab4.backend.data.entities.TokenEntity;
 import lab4.backend.data.repositories.token.postgres.TokenRepository;
@@ -97,6 +98,7 @@ public class TokenService {
         }
     }
 
+    @Transactional
     public TokenPairDTO refreshToken(TokenDTO refreshToken) {
         if (!validateToken(refreshToken)) {
             throw new ServiceException("Invalid token");
@@ -119,7 +121,6 @@ public class TokenService {
     public void revokeToken(TokenDTO refreshToken) {
         TokenEntity entity = TokenMapper.dtoToEntity(findByToken(refreshToken.getToken()));
         entity.setRevoked(true);
-        System.out.println(entity);
         tokenRepository.update(entity);
     }
 

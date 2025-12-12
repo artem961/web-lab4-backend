@@ -18,6 +18,7 @@ public class UserEntity {
     @Column(unique = true)
     private String username;
 
+    @Column(length = 512)
     private String password;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
