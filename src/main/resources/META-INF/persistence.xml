@@ -9,9 +9,10 @@
         <class>lab4.backend.data.entities.ResultEntity</class>
         <class>lab4.backend.data.entities.UserEntity</class>
         <class>lab4.backend.data.entities.TokenEntity</class>
+        <class>lab4.backend.data.entities.TableMetaEntity</class>
 
         <properties>
-            <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
             <property name="eclipselink.weaving" value="false"/>
             <property name="eclipselink.weaving.internal" value="false"/>
             <property name="eclipselink.weaving.lazy" value="false"/>

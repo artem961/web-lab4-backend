@@ -3,6 +3,7 @@ package lab4.backend.api.resources;
 import jakarta.ejb.EJB;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lab4.backend.api.models.ResultResponseModel;
@@ -15,15 +16,10 @@ import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.UserDTO;
 import lab4.backend.services.AuthService;
 import lab4.backend.services.ResultService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lab4.backend.services.VersionService;
 import lombok.extern.java.Log;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Path("/dots")
@@ -35,6 +31,9 @@ import java.util.stream.Collectors;
 public class ResultResource {
     @EJB
     private ResultService resultService;
+
+    @EJB
+    private VersionService  versionService;
 
     @EJB
     private AuthService authService;
@@ -60,20 +59,37 @@ public class ResultResource {
 
     @GET
     @Path("/all")
-    public List<ResultResponseModel> getAllResults(@HeaderParam("Authorization") String header) {
+    public Response getAllResults(@HeaderParam("Authorization") String header,
+                                  @HeaderParam("If-None-Match") String ifNoneMatch) {
+        String lastModified = versionService.getCurrentVersion("results");
+        log.info("lastModified: " + lastModified);
+        log.info("ifNoneMatch: " + ifNoneMatch);
 
-        List<ResultDTO> results = resultService.getAllResults();
-        List<ResultResponseModel> resultsModels = results.stream()
-                .map(ResultResponseModel::fromResultDTO)
-                .toList();
-        return resultsModels;
+        if (ifNoneMatch == null || !ifNoneMatch.equals(lastModified)) {
+            List<ResultDTO> results = resultService.getAllResults();
+            List<ResultResponseModel> resultsModels = results.stream()
+                    .map(ResultResponseModel::fromResultDTO)
+                    .toList();
+
+            return Response
+                    .ok(new GenericEntity<List<ResultResponseModel>>(resultsModels) {}) // ИСПРАВЛЕНО
+                    .header("ETag", lastModified)
+                    .build();
+        } else {
+            return Response
+                    .notModified()
+                    .build();
+        }
     }
 
     @DELETE
     @Path("/all")
-    public void deleteAllResults(@HeaderParam("Authorization") String header) {
+    public Response deleteAllResults(@HeaderParam("Authorization") String header) {
         UserDTO userDTO = getUserFromHeader(header);
         resultService.deleteAllResultsForUser(userDTO);
+        return Response
+                .ok()
+                .build();
     }
 
     @DELETE

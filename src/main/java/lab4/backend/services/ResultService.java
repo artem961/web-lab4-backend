@@ -13,17 +13,25 @@ import lab4.backend.services.utils.annotations.ExceptionMessage;
 import lab4.backend.services.utils.annotations.WrapWithServiceException;
 import lab4.backend.services.utils.HitChecker;
 import lab4.backend.utils.mapping.ResultMapper;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.java.Log;
+import org.eclipse.persistence.jpa.jpql.parser.DateTime;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Stateless
 @WrapWithServiceException
 @ExceptionMessage
+@Log
 public class ResultService {
     @EJB
     private ResultRepository resultRepository;
 
+    @Transactional
     public ResultDTO checkHit(DotDTO dotDTO, UserDTO user) {
         ResultDTO resultDTO = HitChecker.checkHit(dotDTO);
         resultDTO.setUser(user);
@@ -32,6 +40,7 @@ public class ResultService {
         return ResultMapper.entityToDTO(entity);
     }
 
+    @Transactional
     public List<ResultDTO> getAllResults() {
         return resultRepository.getAllResults().stream()
                 .map(ResultMapper::entityToDTO)
