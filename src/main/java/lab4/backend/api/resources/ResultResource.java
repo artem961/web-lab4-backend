@@ -88,7 +88,7 @@ public class ResultResource {
         UserDTO userDTO = getUserFromHeader(header);
         resultService.deleteAllResultsForUser(userDTO);
         return Response
-                .ok()
+                .noContent()
                 .build();
     }
 

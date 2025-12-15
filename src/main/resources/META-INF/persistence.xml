@@ -13,7 +13,6 @@
 
         <properties>
             <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
-            <property name="eclipselink.ddl-generation" value="none"/>
             <property name="eclipselink.weaving" value="false"/>
             <property name="eclipselink.weaving.internal" value="false"/>
             <property name="eclipselink.weaving.lazy" value="false"/>
