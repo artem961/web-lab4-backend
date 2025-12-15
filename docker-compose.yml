@@ -23,6 +23,23 @@ services:
       retries: 5
       start_period: 30s
 
+  flyway:
+    image: flyway/flyway:10.0.0
+    command:
+      - -url=jdbc:postgresql://postgres:5432/${DB_NAME:-lab4db}
+      - -user=${DB_USERNAME:-postgres}
+      - -password=${DB_PASSWORD:-postgres}
+      - -connectRetries=10
+      - -locations=filesystem:/flyway/sql
+      - migrate
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lab4-network
+
   wildfly:
     build:
       context: .
@@ -37,8 +54,8 @@ services:
       - "9990:9990"
     restart: unless-stopped
     depends_on:
-      postgres:
-        condition: service_healthy
+      flyway:
+        condition: service_completed_successfully
     networks:
       - lab4-network
 

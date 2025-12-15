@@ -12,7 +12,8 @@
         <class>lab4.backend.data.entities.TableMetaEntity</class>
 
         <properties>
-            <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
+            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+            <property name="eclipselink.ddl-generation" value="none"/>
             <property name="eclipselink.weaving" value="false"/>
             <property name="eclipselink.weaving.internal" value="false"/>
             <property name="eclipselink.weaving.lazy" value="false"/>
