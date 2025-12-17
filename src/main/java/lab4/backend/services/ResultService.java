@@ -69,7 +69,7 @@ public class ResultService {
         if (result.getUser().getId().equals(user.getId())) {
             resultRepository.deleteById(id);
         } else {
-            throw new ServiceException(String.format("User with id %s is not owner of result with id %s", user.getId(), id));
+            throw new ServiceException(String.format("User %s is not owner of result with id %s", user.getUsername(), id));
         }
     }
 }
