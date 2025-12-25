@@ -7,11 +7,13 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lab4.backend.data.entities.ResultEntity;
 
+import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 
-@Stateless
+@Singleton
 public class SQLResultRepository implements ResultRepository {
     @PersistenceContext
     private EntityManager em;
@@ -20,7 +22,8 @@ public class SQLResultRepository implements ResultRepository {
     @Override
     public ResultEntity saveResult(ResultEntity entity) {
         em.persist(entity);
-        em.flush();
+        //em.flush();
+
         return entity;
     }
 
@@ -44,7 +47,7 @@ public class SQLResultRepository implements ResultRepository {
     @Override
     public List<ResultEntity> getAllResultsForUser(Integer userId) {
         List<ResultEntity> results = em.createQuery(
-                        "SELECT r FROM ResultEntity r WHERE r.user.id=:userId order by r.id desc", ResultEntity.class)
+                        "SELECT r FROM ResultEntity r WHERE r.user.id=:userId order by r.currentTime desc", ResultEntity.class)
                 .setParameter("userId", userId)
                 .getResultList();
 

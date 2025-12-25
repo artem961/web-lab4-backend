@@ -84,8 +84,10 @@ public class ResultResource {
     @POST
     @Path("/check")
     public ResultResponseModel checkHit(@Valid DotDTO dotDTO, @HeaderParam("Authorization") String header) {
+
         UserDTO userDTO = getUserFromHeader(header);
         ResultDTO resultDTO = resultService.checkHit(dotDTO, userDTO);
+
         return ResultResponseModel.fromResultDTO(resultDTO);
     }
 
