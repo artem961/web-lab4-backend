@@ -34,7 +34,7 @@ public class SQLResultRepository implements ResultRepository {
     @Override
     public List<ResultEntity> getAllResults() {
         List<ResultEntity> results = em.createQuery(
-                "SELECT r FROM ResultEntity r",
+                "SELECT r FROM ResultEntity r order by r.id desc",
                 ResultEntity.class).getResultList();
 
         return results;
@@ -43,7 +43,7 @@ public class SQLResultRepository implements ResultRepository {
     @Override
     public List<ResultEntity> getAllResultsForUser(Integer userId) {
         List<ResultEntity> results = em.createQuery(
-                        "SELECT r FROM ResultEntity r WHERE r.user.id=:userId", ResultEntity.class)
+                        "SELECT r FROM ResultEntity r WHERE r.user.id=:userId order by r.id desc", ResultEntity.class)
                 .setParameter("userId", userId)
                 .getResultList();
 
