@@ -2,6 +2,7 @@ package lab4.backend.services;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateless;
 import lab4.backend.data.entities.UserEntity;
 import lab4.backend.data.repositories.user.postgres.UserRepository;
 import lab4.backend.dto.UserDTO;
@@ -11,7 +12,7 @@ import lab4.backend.utils.mapping.UserMapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Singleton
+@Stateless
 public class UserService {
     @EJB
     private UserRepository userRepository;

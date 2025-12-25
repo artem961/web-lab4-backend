@@ -2,6 +2,7 @@ package lab4.backend.services;
 
 import jakarta.ejb.EJB;
 import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateless;
 import jakarta.transaction.Transactional;
 import lab4.backend.dto.TokenDTO;
 import lab4.backend.dto.TokenPairDTO;
@@ -12,7 +13,7 @@ import lab4.backend.services.utils.annotations.ExceptionMessage;
 import lab4.backend.services.utils.annotations.WrapWithServiceException;
 import lab4.backend.utils.mapping.UserMapper;
 
-@Singleton
+@Stateless
 @WrapWithServiceException
 @ExceptionMessage
 public class AuthService {

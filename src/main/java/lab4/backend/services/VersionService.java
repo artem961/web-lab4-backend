@@ -1,13 +1,14 @@
 package lab4.backend.services;
 
 import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-@Singleton
+@Stateless
 public class VersionService {
     @PersistenceContext
     private EntityManager em;

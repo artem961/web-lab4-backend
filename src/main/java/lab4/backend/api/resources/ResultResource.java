@@ -1,8 +1,12 @@
 package lab4.backend.api.resources;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.container.AsyncResponse;
+import jakarta.ws.rs.container.Suspended;
+import jakarta.ws.rs.container.TimeoutHandler;
 import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -17,9 +21,15 @@ import lab4.backend.dto.UserDTO;
 import lab4.backend.services.AuthService;
 import lab4.backend.services.ResultService;
 import lab4.backend.services.VersionService;
+import lab4.backend.services.utils.ResultsObserver;
+import lab4.backend.utils.observer.ChangeListener;
+import lab4.backend.utils.observer.Observer;
 import lombok.extern.java.Log;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Path("/dots")
@@ -37,6 +47,38 @@ public class ResultResource {
 
     @EJB
     private AuthService authService;
+
+    @EJB
+    private Observer resultsObserver;
+
+    private List<AsyncResponse> waitingClients;
+
+    {
+        waitingClients = Collections.synchronizedList(new ArrayList<>());
+    }
+
+    @PostConstruct
+    private void init() {
+        ChangeListener changeListener = new ChangeListener() {
+            @Override
+            public void onChange() {
+                String lastModified = versionService.getCurrentVersion("results");
+                List<ResultResponseModel> resultsModels = resultService.getAllResults().stream()
+                        .map(ResultResponseModel::fromResultDTO)
+                        .toList();
+
+                waitingClients.forEach(asyncResponse -> {
+                    asyncResponse.resume(Response
+                            .ok(new GenericEntity<List<ResultResponseModel>>(resultsModels) {})
+                            .header("ETag", lastModified)
+                            .build());
+                });
+            }
+        };
+
+        resultsObserver.registerChangeListener(changeListener);
+    }
+
 
     @POST
     @Path("/check")
@@ -59,11 +101,8 @@ public class ResultResource {
 
     @GET
     @Path("/all")
-    public Response getAllResults(@HeaderParam("Authorization") String header,
-                                  @HeaderParam("If-None-Match") String ifNoneMatch) {
+    public Response getAllResults(@HeaderParam("If-None-Match") String ifNoneMatch) {
         String lastModified = versionService.getCurrentVersion("results");
-        log.info("lastModified: " + lastModified);
-        log.info("ifNoneMatch: " + ifNoneMatch);
 
         if (ifNoneMatch == null || !ifNoneMatch.equals(lastModified)) {
             List<ResultDTO> results = resultService.getAllResults();
@@ -72,7 +111,7 @@ public class ResultResource {
                     .toList();
 
             return Response
-                    .ok(new GenericEntity<List<ResultResponseModel>>(resultsModels) {}) // ИСПРАВЛЕНО
+                    .ok(new GenericEntity<List<ResultResponseModel>>(resultsModels) {})
                     .header("ETag", lastModified)
                     .build();
         } else {
@@ -80,6 +119,20 @@ public class ResultResource {
                     .notModified()
                     .build();
         }
+    }
+
+    @GET
+    @Path("/all/poll")
+    public void pollAllResults(@Suspended AsyncResponse asyncResponse) {
+        asyncResponse.setTimeout(5000, TimeUnit.MILLISECONDS);
+        asyncResponse.setTimeoutHandler(new TimeoutHandler() {
+            @Override
+            public void handleTimeout(AsyncResponse asyncResponse) {
+                asyncResponse.resume(Response.status(Response.Status.NO_CONTENT).build());
+                waitingClients.remove(asyncResponse);
+            }
+        });
+        waitingClients.add(asyncResponse);
     }
 
     @DELETE

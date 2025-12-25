@@ -9,10 +9,12 @@ import lab4.backend.dto.ResultDTO;
 import lab4.backend.dto.DotDTO;
 import lab4.backend.dto.UserDTO;
 import lab4.backend.services.exceptions.ServiceException;
+import lab4.backend.services.utils.ResultsObserver;
 import lab4.backend.services.utils.annotations.ExceptionMessage;
 import lab4.backend.services.utils.annotations.WrapWithServiceException;
 import lab4.backend.services.utils.HitChecker;
 import lab4.backend.utils.mapping.ResultMapper;
+import lab4.backend.utils.observer.Observer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.java.Log;
@@ -31,12 +33,17 @@ public class ResultService {
     @EJB
     private ResultRepository resultRepository;
 
+    @EJB
+    private Observer resultsObserver;
+
     @Transactional
     public ResultDTO checkHit(DotDTO dotDTO, UserDTO user) {
         ResultDTO resultDTO = HitChecker.checkHit(dotDTO);
         resultDTO.setUser(user);
         ResultEntity entity = resultRepository.saveResult(
                 ResultMapper.dtoToEntity(resultDTO));
+
+        resultsObserver.notifyListeners();
         return ResultMapper.entityToDTO(entity);
     }
 
@@ -55,10 +62,12 @@ public class ResultService {
 
     public void deleteAllResults() {
         resultRepository.deleteAllResults();
+        resultsObserver.notifyListeners();
     }
 
     public void deleteAllResultsForUser(UserDTO user) {
         resultRepository.deleteAllForUser(user.getId());
+        resultsObserver.notifyListeners();
     }
 
     @Transactional
@@ -68,6 +77,7 @@ public class ResultService {
 
         if (result.getUser().getId().equals(user.getId())) {
             resultRepository.deleteById(id);
+            resultsObserver.notifyListeners();
         } else {
             throw new ServiceException(String.format("User %s is not owner of result with id %s", user.getUsername(), id));
         }
