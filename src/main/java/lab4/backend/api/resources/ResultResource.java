@@ -73,6 +73,7 @@ public class ResultResource {
                             .header("ETag", lastModified)
                             .build());
                 });
+                waitingClients.clear();
             }
         };
 
