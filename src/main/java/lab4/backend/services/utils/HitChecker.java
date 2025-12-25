@@ -6,6 +6,8 @@ import lab4.backend.dto.DotDTO;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 public class HitChecker {
     public static ResultDTO checkHit(DotDTO dotDTO){
@@ -19,7 +21,7 @@ public class HitChecker {
                 .r(dotDTO.getR())
                 .result(result)
                 .time(endTime - startTime)
-                .currentTime(LocalDateTime.now().withNano(0))
+                .currentTime(OffsetDateTime.now(ZoneOffset.UTC).withNano(0))
                 .build();
     }
 

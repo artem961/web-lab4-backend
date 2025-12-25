@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Data
 @AllArgsConstructor
@@ -21,7 +22,7 @@ public class ResultResponseModel {
     private BigDecimal r;
     private Boolean result;
     private Long time;
-    private LocalDateTime currentTime;
+    private OffsetDateTime currentTime;
     private UserDTO user;
 
     public static ResultResponseModel fromResultDTO(ResultDTO resultDTO) {

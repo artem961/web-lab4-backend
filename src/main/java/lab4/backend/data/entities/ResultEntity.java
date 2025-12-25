@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Data
@@ -24,7 +25,7 @@ public class ResultEntity {
     private BigDecimal r;
     private Boolean result;
     private Long time;
-    private LocalDateTime currentTime;
+    private OffsetDateTime currentTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
