@@ -1,6 +1,7 @@
 package lab4.backend.data.repositories.result.postgres;
 
 import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Singleton
+@Stateless
 public class SQLResultRepository implements ResultRepository {
     @PersistenceContext
     private EntityManager em;

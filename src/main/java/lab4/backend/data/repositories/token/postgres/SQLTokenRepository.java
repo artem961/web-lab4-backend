@@ -1,6 +1,7 @@
 package lab4.backend.data.repositories.token.postgres;
 
 import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -9,7 +10,7 @@ import lab4.backend.dto.TokenDTO;
 
 import java.util.Optional;
 
-@Singleton
+@Stateless
 public class SQLTokenRepository implements TokenRepository {
     @PersistenceContext
     private EntityManager em;

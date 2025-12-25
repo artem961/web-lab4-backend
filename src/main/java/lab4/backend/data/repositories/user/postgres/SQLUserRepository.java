@@ -1,6 +1,7 @@
 package lab4.backend.data.repositories.user.postgres;
 
 import jakarta.ejb.Singleton;
+import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -10,7 +11,7 @@ import lombok.extern.java.Log;
 import java.util.List;
 import java.util.Optional;
 
-@Singleton
+@Stateless
 @Log
 public class SQLUserRepository implements UserRepository {
     @PersistenceContext
