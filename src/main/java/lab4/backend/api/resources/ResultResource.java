@@ -124,7 +124,7 @@ public class ResultResource {
     @GET
     @Path("/all/poll")
     public void pollAllResults(@Suspended AsyncResponse asyncResponse) {
-        asyncResponse.setTimeout(5000, TimeUnit.MILLISECONDS);
+        asyncResponse.setTimeout(15000, TimeUnit.MILLISECONDS);
         asyncResponse.setTimeoutHandler(new TimeoutHandler() {
             @Override
             public void handleTimeout(AsyncResponse asyncResponse) {
